@@ -1,4 +1,3 @@
-#include <locale.h>
 #include "network.h"
 #include "region_layer.h"
 #include "cost_layer.h"
@@ -704,10 +703,6 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
 
 void run_detector(int argc, char **argv)
 {
-    // Set locales
-    setlocale(LC_NUMERIC, "C");
-
-
     char *prefix = find_char_arg(argc, argv, "-prefix", 0);
     float thresh = find_float_arg(argc, argv, "-thresh", .24);
     float hier_thresh = find_float_arg(argc, argv, "-hier", .5);

@@ -274,7 +274,7 @@ char *fgetl(FILE *fp)
             size *= 2;
             line = (char*)realloc(line, size*sizeof(char));
             if(!line) {
-                printf("%ld\n", size);
+                //printf("%ld\n", size);
                 malloc_error();
             }
         }
@@ -617,14 +617,23 @@ float rand_normal()
 
 size_t rand_size_t()
 {
-    return  ((size_t)(rand()&0xff) << 56) | 
-            ((size_t)(rand()&0xff) << 48) |
-            ((size_t)(rand()&0xff) << 40) |
-            ((size_t)(rand()&0xff) << 32) |
-            ((size_t)(rand()&0xff) << 24) |
-            ((size_t)(rand()&0xff) << 16) |
-            ((size_t)(rand()&0xff) << 8) |
-            ((size_t)(rand()&0xff) << 0);
+#if (UINT_MAX == UINT32_MAX) || (__SIZEOF_POINTER__ == 4)
+	return
+		((size_t)(rand() & 0xff) << 24) |
+		((size_t)(rand() & 0xff) << 16) |
+		((size_t)(rand() & 0xff) << 8) |
+		((size_t)(rand() & 0xff) << 0);
+#else
+	return  
+		((size_t)(rand()&0xff) << 56) | 
+		((size_t)(rand()&0xff) << 48) |
+		((size_t)(rand()&0xff) << 40) |
+		((size_t)(rand()&0xff) << 32) |
+		((size_t)(rand()&0xff) << 24) |
+		((size_t)(rand()&0xff) << 16) |
+		((size_t)(rand() & 0xff) << 8) |
+		((size_t)(rand() & 0xff) << 0);
+#endif
 }
 
 float rand_uniform(float min, float max)
