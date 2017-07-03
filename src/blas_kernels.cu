@@ -786,17 +786,22 @@ __device__ void softmax_device(float *input, int n, float temp, int stride, floa
     }
 }
 
-__global__ void softmax_kernel(float *input, int n, int batch, int batch_offset, int groups, int group_offset, int stride, float temp, float *output)
+__global__ void softmax_kernel(float *input, int offset, int n, int batch, int batch_offset, int groups, int group_offset, int stride, float temp, float *output)
 {
-    int id = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x;
+    int id = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x + offset;
     if (id >= batch*groups) return;
     int b = id / groups;
     int g = id % groups;
     softmax_device(input + b*batch_offset + g*group_offset, n, temp, stride, output + b*batch_offset + g*group_offset);
 }
 
+void softmax_offset_gpu(float *input, int offset, int n, int batch, int batch_offset, int groups, int group_offset, int stride, float temp, float *output)
+{
+    softmax_kernel<<<cuda_gridsize(batch*groups), BLOCK>>>(input, offset, n, batch, batch_offset, groups, group_offset, stride, temp, output);
+    check_error(cudaPeekAtLastError());
+}
+
 void softmax_gpu(float *input, int n, int batch, int batch_offset, int groups, int group_offset, int stride, float temp, float *output)
 {
-    softmax_kernel<<<cuda_gridsize(batch*groups), BLOCK>>>(input, n, batch, batch_offset, groups, group_offset, stride, temp, output);
-    check_error(cudaPeekAtLastError());
+	softmax_offset_gpu(input, 0, n, batch, batch_offset, groups, group_offset, stride, temp, output);
 }

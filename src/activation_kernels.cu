@@ -139,26 +139,36 @@ __device__ float gradient_kernel(float x, ACTIVATION a)
     return 0;
 }
 
-__global__ void activate_array_kernel(float *x, int n, ACTIVATION a)
+__global__ void activate_array_kernel(float *x, int offset, int n, ACTIVATION a)
 {
-    int i = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x;
+    int i = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x + offset;
     if(i < n) x[i] = activate_kernel(x[i], a);
 }
 
-__global__ void gradient_array_kernel(float *x, int n, ACTIVATION a, float *delta)
+__global__ void gradient_array_kernel(float *x, int offset, int n, ACTIVATION a, float *delta)
 {
-    int i = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x;
+    int i = (blockIdx.x + blockIdx.y*gridDim.x) * blockDim.x + threadIdx.x + offset;
     if(i < n) delta[i] *= gradient_kernel(x[i], a);
+}
+
+void activate_array_offset_ongpu(float *x, int offset, int n, ACTIVATION a) 
+{
+    activate_array_kernel<<<cuda_gridsize(n), BLOCK>>>(x, offset, n, a);
+    check_error(cudaPeekAtLastError());
 }
 
 void activate_array_ongpu(float *x, int n, ACTIVATION a) 
 {
-    activate_array_kernel<<<cuda_gridsize(n), BLOCK>>>(x, n, a);
+    activate_array_offset_ongpu(x, 0, n, a);
+}
+
+void gradient_array_offset_ongpu(float *x, int offset, int n, ACTIVATION a, float *delta, offset2)
+{
+	gradient_array_kernel<<<cuda_gridsize(n), BLOCK>>>(x, offset, n, a, delta, offset2);
     check_error(cudaPeekAtLastError());
 }
 
 void gradient_array_ongpu(float *x, int n, ACTIVATION a, float *delta) 
 {
-    gradient_array_kernel<<<cuda_gridsize(n), BLOCK>>>(x, n, a, delta);
-    check_error(cudaPeekAtLastError());
+    gradient_array_offset_ongpu(x, 0, n, a, delta, 0);
 }
