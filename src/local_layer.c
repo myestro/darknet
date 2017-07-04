@@ -186,24 +186,24 @@ void forward_local_layer_gpu(const local_layer l, network_state state)
     int locations = out_h * out_w;
 
     for(i = 0; i < l.batch; ++i){
-        copy_ongpu(l.outputs, l.biases_gpu, 1, l.output_gpu + i*l.outputs, 1);
+        copy_ongpu_offset(l.outputs, l.biases_gpu, 0, 1, l.output_gpu, i*l.outputs, 1);
     }
 
     for(i = 0; i < l.batch; ++i){
-        float *input = state.input + i*l.w*l.h*l.c;
-        im2col_ongpu(input, l.c, l.h, l.w, 
-                l.size, l.stride, l.pad, state.workspace);
-        float *output = l.output_gpu + i*l.outputs;
+        GPU_DATA input = state.input_gpu;
+        im2col_ongpu(input, i*l.w*l.h*l.c, l.c, l.h, l.w, 
+                l.size, l.stride, l.pad, state.workspace_gpu);
+        GPU_DATA output = l.output_gpu;
         for(j = 0; j < locations; ++j){
-            float *a = l.weights_gpu + j*l.size*l.size*l.c*l.n;
-            float *b = state.workspace + j;
-            float *c = output + j;
+            GPU_DATA a = l.weights_gpu;
+            GPU_DATA b = state.workspace_gpu;
+            GPU_DATA c = output;
 
             int m = l.n;
             int n = 1;
             int k = l.size*l.size*l.c;
 
-            gemm_ongpu(0,0,m,n,k,1,a,k,b,locations,1,c,locations);
+            gemm_ongpu(0,0,m,n,k,1,a,j*l.size*l.size*l.c*l.n,k,b,j,locations,1,c,i*l.outputs + j,locations);
         }
     }
     activate_array_ongpu(l.output_gpu, l.outputs*l.batch, l.activation);
@@ -216,39 +216,39 @@ void backward_local_layer_gpu(local_layer l, network_state state)
 
     gradient_array_ongpu(l.output_gpu, l.outputs*l.batch, l.activation, l.delta_gpu);
     for(i = 0; i < l.batch; ++i){
-        axpy_ongpu(l.outputs, 1, l.delta_gpu + i*l.outputs, 1, l.bias_updates_gpu, 1);
+        axpy_ongpu_offset(l.outputs, 1, l.delta_gpu, i*l.outputs, 1, l.bias_updates_gpu, 0, 1);
     }
 
     for(i = 0; i < l.batch; ++i){
-        float *input = state.input + i*l.w*l.h*l.c;
-        im2col_ongpu(input, l.c, l.h, l.w, 
-                l.size, l.stride, l.pad, state.workspace);
+        GPU_DATA input = state.input_gpu;
+        im2col_ongpu(input, i*l.w*l.h*l.c, l.c, l.h, l.w, 
+                l.size, l.stride, l.pad, state.workspace_gpu);
 
         for(j = 0; j < locations; ++j){ 
-            float *a = l.delta_gpu + i*l.outputs + j;
-            float *b = state.workspace + j;
-            float *c = l.weight_updates_gpu + j*l.size*l.size*l.c*l.n;
+            GPU_DATA a = l.delta_gpu;
+            GPU_DATA b = state.workspace_gpu;
+            GPU_DATA c = l.weight_updates_gpu;
             int m = l.n;
             int n = l.size*l.size*l.c;
             int k = 1;
 
-            gemm_ongpu(0,1,m,n,k,1,a,locations,b,locations,1,c,n);
+            gemm_ongpu(0,1,m,n,k,1,a,j,locations,b,j,locations,1,c,j*l.size*l.size*l.c*l.n,n);
         }
 
         if(state.delta){
             for(j = 0; j < locations; ++j){ 
-                float *a = l.weights_gpu + j*l.size*l.size*l.c*l.n;
-                float *b = l.delta_gpu + i*l.outputs + j;
-                float *c = state.workspace + j;
+                GPU_DATA a = l.weights_gpu;
+                GPU_DATA b = l.delta_gpu;
+                GPU_DATA c = state.workspace_gpu;
 
                 int m = l.size*l.size*l.c;
                 int n = 1;
                 int k = l.n;
 
-                gemm_ongpu(1,0,m,n,k,1,a,m,b,locations,0,c,locations);
+                gemm_ongpu(1,0,m,n,k,1,a,j*l.size*l.size*l.c*l.n,m,b,i*l.outputs + j,locations,0,c,j,locations);
             }
 
-            col2im_ongpu(state.workspace, l.c,  l.h,  l.w,  l.size,  l.stride, l.pad, state.delta+i*l.c*l.h*l.w);
+            col2im_ongpu(state.workspace_gpu, l.c,  l.h,  l.w,  l.size,  l.stride, l.pad, state.delta_gpu, i*l.c*l.h*l.w);
         }
     }
 }

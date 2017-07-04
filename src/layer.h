@@ -208,55 +208,56 @@ struct layer{
     size_t workspace_size;
 
     #ifdef GPU
-    int *indexes_gpu;
+    GPU_DATA indexes_gpu;
 
-    float *z_gpu;
-    float *r_gpu;
-    float *h_gpu;
+    GPU_DATA z_gpu;
+    GPU_DATA r_gpu;
+    GPU_DATA h_gpu;
 
-    float *m_gpu;
-    float *v_gpu;
+    GPU_DATA m_gpu;
+    GPU_DATA v_gpu;
 
-    float * prev_state_gpu;
-    float * forgot_state_gpu;
-    float * forgot_delta_gpu;
-    float * state_gpu;
-    float * state_delta_gpu;
-    float * gate_gpu;
-    float * gate_delta_gpu;
-    float * save_gpu;
-    float * save_delta_gpu;
-    float * concat_gpu;
-    float * concat_delta_gpu;
+    GPU_DATA prev_state_gpu;
+    GPU_DATA forgot_state_gpu;
+    GPU_DATA forgot_delta_gpu;
+    GPU_DATA state_gpu;
+    GPU_DATA state_delta_gpu;
+    GPU_DATA gate_gpu;
+    GPU_DATA gate_delta_gpu;
+    GPU_DATA save_gpu;
+    GPU_DATA save_delta_gpu;
+    GPU_DATA concat_gpu;
+    GPU_DATA concat_delta_gpu;
 
-    float *binary_input_gpu;
-    float *binary_weights_gpu;
+    GPU_DATA binary_input_gpu;
+    GPU_DATA binary_weights_gpu;
 
-    float * mean_gpu;
-    float * variance_gpu;
+    GPU_DATA mean_gpu;
+    GPU_DATA variance_gpu;
 
-    float * rolling_mean_gpu;
-    float * rolling_variance_gpu;
+    GPU_DATA rolling_mean_gpu;
+    GPU_DATA rolling_variance_gpu;
 
-    float * variance_delta_gpu;
-    float * mean_delta_gpu;
+    GPU_DATA variance_delta_gpu;
+    GPU_DATA mean_delta_gpu;
 
-    float * x_gpu;
-    float * x_norm_gpu;
-    float * weights_gpu;
-    float * weight_updates_gpu;
+    GPU_DATA x_gpu;
+    GPU_DATA x_norm_gpu;
+    GPU_DATA weights_gpu;
+    GPU_DATA weight_updates_gpu;
 
-    float * biases_gpu;
-    float * bias_updates_gpu;
+    GPU_DATA biases_gpu;
+    GPU_DATA bias_updates_gpu;
 
-    float * scales_gpu;
-    float * scale_updates_gpu;
+    GPU_DATA scales_gpu;
+    GPU_DATA scale_updates_gpu;
 
-    float * output_gpu;
-    float * delta_gpu;
-    float * rand_gpu;
-    float * squared_gpu;
-    float * norms_gpu;
+    GPU_DATA output_gpu;
+    GPU_DATA delta_gpu;
+    GPU_DATA rand_gpu;
+    GPU_DATA squared_gpu;
+    GPU_DATA norms_gpu;
+    
     #ifdef CUDNN
     cudnnTensorDescriptor_t srcTensorDesc, dstTensorDesc;
     cudnnTensorDescriptor_t dsrcTensorDesc, ddstTensorDesc;

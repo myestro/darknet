@@ -1,9 +1,10 @@
+#ifdef OPENCL
+
 #include <string.h>
 #include "activations.h"
 #include "cuda.h"
-#include "activation_kernels.cl"
 
-#ifdef OPENCL
+#include "activation_kernels.cl"
 
 cl_program opencl_activation_kernel_program = 0;
 cl_kernel opencl_activate_array_kernel = 0;

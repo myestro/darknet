@@ -304,13 +304,18 @@ void axpy_ongpu(int N, float ALPHA, cl_mem  X, int INCX, cl_mem  Y, int INCY)
 }
 
 
-void pow_ongpu(int N, float ALPHA, cl_mem  X, int INCX, cl_mem  Y, int INCY)
+void pow_ongpu_offset(int N, float ALPHA, cl_mem X, int OFFX, int INCX, cl_mem Y, int OFFY, int INCY)
 {
     dim3 dimGrid, dimBlock;
     dimGrid = cuda_gridsize(N);
     dimBlock = dim3_create(BLOCK, 1, 1);
 
-    opencl_kernel(opencl_pow_kernel, dimGrid, dimBlock, 12, &N, sizeof(cl_int), &ALPHA, sizeof(cl_float), &X, sizeof(cl_mem), &INCX, sizeof(cl_int), &Y, sizeof(cl_mem), &INCY, sizeof(cl_int));
+    opencl_kernel(opencl_pow_kernel, dimGrid, dimBlock, 16, &N, sizeof(cl_int), &ALPHA, sizeof(cl_float), &X, sizeof(cl_mem), &OFFX, sizeof(cl_int), &INCX, sizeof(cl_int), &Y, sizeof(cl_mem), &OFFY, sizeof(cl_int), &INCY, sizeof(cl_int));    
+}
+
+void pow_ongpu(int N, float ALPHA, cl_mem  X, int INCX, cl_mem  Y, int INCY)
+{
+    pow_ongpu_offset(N, ALPHA, X, 0, INCX, Y, 0, INCY);
 }
 
 
@@ -381,14 +386,19 @@ void mask_ongpu(int N, cl_mem  X, float mask_num, cl_mem  mask)
     opencl_kernel(opencl_mask_kernel, dimGrid, dimBlock, 8, &N, sizeof(cl_int), &X, sizeof(cl_mem), &mask_num, sizeof(cl_int), &mask, sizeof(cl_mem));
 }
 
-
-void const_ongpu(int N, float ALPHA, cl_mem  X, int INCX)
+void const_ongpu_offset(int N, float ALPHA, cl_mem X, int OFFX, int INCX)
 {
     dim3 dimGrid, dimBlock;
     dimGrid = cuda_gridsize(N);
     dimBlock = dim3_create(BLOCK, 1, 1);
 
-    opencl_kernel(opencl_const_kernel, dimGrid, dimBlock, 8, &N, sizeof(cl_int), &ALPHA, sizeof(cl_float), &X, sizeof(cl_mem), &INCX, sizeof(cl_int));
+    opencl_kernel(opencl_const_kernel, dimGrid, dimBlock, 10, &N, sizeof(cl_int), &ALPHA, sizeof(cl_float), &X, sizeof(cl_mem), &OFFX, sizeof(cl_mem), &INCX, sizeof(cl_int));
+}
+
+
+void const_ongpu(int N, float ALPHA, cl_mem  X, int INCX)
+{
+    const_ongpu_offset(N, ALPHA, X, 0, INCX);
 }
 
 

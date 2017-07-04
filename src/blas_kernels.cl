@@ -95,7 +95,6 @@ __kernel void adam_kernel(int N, __global float *x, __global float *m, __global 
     if (index >= N) return;
     
     x[index] = x[index] + (rate * sqrt(1.-pow(B2, t)) / (1.-pow(B1, t)) * m[index] / (sqrt(v[index]) + eps));
-    //if(index == 0) printf("%f %f %f %f\n", m[index], v[index], (rate * sqrt(1.-pow(B2, t)) / (1.-pow(B1, t)) * m[index] / (sqrt(v[index]) + eps)));
 }
 
 
@@ -276,17 +275,11 @@ __kernel void reorg_kernel(int N, __global float *x, int w, int h, int c, int ba
     int offset = in_c / out_c;
     int w2 = in_w*stride + offset % stride;
     int h2 = in_h*stride + offset / stride;
-    //printf("%d\n", offset);
-    int out_index = w2 + w*stride*(h2 + h*stride*(c2 + out_c*b));
 
-   // printf("%d %d %d\n", w2, h2, c2);
-    //printf("%d %d\n", in_index, out_index);
-    //if(out_index >= N || out_index < 0) printf("bad bad bad \n");
+    int out_index = w2 + w*stride*(h2 + h*stride*(c2 + out_c*b));
 
     if(forward) out[out_index] = x[in_index];
     else out[in_index] = x[out_index];
-    //if(forward) out[1] = x[1];
-    //else out[0] = x[0];
 }
 
 
@@ -297,17 +290,17 @@ __kernel void axpy_kernel(int N, float ALPHA, __global float *X, int OFFX, int I
 }
 
 
-__kernel void pow_kernel(int N, float ALPHA, __global float *X, int INCX, __global float *Y, int INCY)
+__kernel void pow_kernel(int N, float ALPHA, __global float *X, int OFFX, int INCX, __global float *Y, int OFFY, int INCY)
 {
     int i = (get_group_id(0) + get_group_id(1)*get_num_groups(0)) * get_local_size(0) + get_local_id(0);
-    if(i < N) Y[i*INCY] = pow(X[i*INCX], ALPHA);
+    if(i < N) Y[i*INCY + OFFY] = pow(X[i*INCX + OFFX], ALPHA);
 }
 
 
-__kernel void const_kernel(int N, float ALPHA, __global float *X, int INCX)
+__kernel void const_kernel(int N, float ALPHA, __global float *X, int OFFX, int INCX)
 {
     int i = (get_group_id(0) + get_group_id(1)*get_num_groups(0)) * get_local_size(0) + get_local_id(0);
-    if(i < N) X[i*INCX] = ALPHA;
+    if(i < N) X[i*INCX + OFFX] = ALPHA;
 }
 
 

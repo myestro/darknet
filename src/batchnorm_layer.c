@@ -191,7 +191,7 @@ void push_batchnorm_layer(layer l)
 
 void forward_batchnorm_layer_gpu(layer l, network_state state)
 {
-    if(l.type == BATCHNORM) copy_ongpu(l.outputs*l.batch, state.input, 1, l.output_gpu, 1);
+    if(l.type == BATCHNORM) copy_ongpu(l.outputs*l.batch, state.input_gpu, 1, l.output_gpu, 1);
     if(l.type == CONNECTED){
         l.out_c = l.outputs;
         l.out_h = l.out_w = 1;
@@ -277,6 +277,6 @@ void backward_batchnorm_layer_gpu(const layer l, network_state state)
     fast_variance_delta_gpu(l.x_gpu, l.delta_gpu, l.mean_gpu, l.variance_gpu, l.batch, l.out_c, l.out_w*l.out_h, l.variance_delta_gpu);
     normalize_delta_gpu(l.x_gpu, l.mean_gpu, l.variance_gpu, l.mean_delta_gpu, l.variance_delta_gpu, l.batch, l.out_c, l.out_w*l.out_h, l.delta_gpu);
 #endif
-    if(l.type == BATCHNORM) copy_ongpu(l.outputs*l.batch, l.delta_gpu, 1, state.delta, 1);
+    if(l.type == BATCHNORM) copy_ongpu(l.outputs*l.batch, l.delta_gpu, 1, state.delta_gpu, 1);
 }
 #endif

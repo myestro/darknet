@@ -55,8 +55,8 @@ void optimize_picture(network *net, image orig, int max_layer, float scale, floa
     state.net = *net;
 
 #ifdef GPU
-    state.input = cuda_make_array(im.data, im.w*im.h*im.c);
-    state.delta = cuda_make_array(im.data, im.w*im.h*im.c);
+    state.input_gpu = cuda_make_array(im.data, im.w*im.h*im.c);
+    state.delta_gpu = cuda_make_array(im.data, im.w*im.h*im.c);
 
     forward_network_gpu(*net, state);
     copy_ongpu(last.outputs, last.output_gpu, 1, last.delta_gpu, 1);
@@ -67,9 +67,9 @@ void optimize_picture(network *net, image orig, int max_layer, float scale, floa
 
     backward_network_gpu(*net, state);
 
-    cuda_pull_array(state.delta, delta.data, im.w*im.h*im.c);
-    cuda_free(state.input);
-    cuda_free(state.delta);
+    cuda_pull_array(state.delta_gpu, delta.data, im.w*im.h*im.c);
+    cuda_free(state.input_gpu);
+    cuda_free(state.delta_gpu);
 #else
     state.input = im.data;
     state.delta = delta.data;
@@ -145,18 +145,18 @@ void reconstruct_picture(network net, float *features, image recon, image update
         network_state state = {0};
         state.net = net;
 #ifdef GPU
-        state.input = cuda_make_array(recon.data, recon.w*recon.h*recon.c);
-        state.delta = cuda_make_array(delta.data, delta.w*delta.h*delta.c);
-        state.truth = cuda_make_array(features, get_network_output_size(net));
+        state.input_gpu = cuda_make_array(recon.data, recon.w*recon.h*recon.c);
+        state.delta_gpu = cuda_make_array(delta.data, delta.w*delta.h*delta.c);
+        state.truth_gpu = cuda_make_array(features, get_network_output_size(net));
 
         forward_network_gpu(net, state);
         backward_network_gpu(net, state);
 
-        cuda_pull_array(state.delta, delta.data, delta.w*delta.h*delta.c);
+        cuda_pull_array(state.delta_gpu, delta.data, delta.w*delta.h*delta.c);
 
-        cuda_free(state.input);
-        cuda_free(state.delta);
-        cuda_free(state.truth);
+        cuda_free(state.input_gpu);
+        cuda_free(state.delta_gpu);
+        cuda_free(state.truth_gpu);
 #else
         state.input = recon.data;
         state.delta = delta.data;

@@ -21,8 +21,13 @@ void update_convolutional_layer_gpu(convolutional_layer layer, int batch, float 
 void push_convolutional_layer(convolutional_layer layer);
 void pull_convolutional_layer(convolutional_layer layer);
 
-void add_bias_gpu(float *output, float *biases, int batch, int n, int size);
-void backward_bias_gpu(float *bias_updates, float *delta, int batch, int n, int size);
+void swap_binary_gpu(convolutional_layer *l);
+
+#ifdef OPENCL
+void convolutional_kernel_init(void);
+void convolutional_kernel_release(void);
+#endif
+
 #ifdef CUDNN
 void cudnn_convolutional_setup(layer *l);
 #endif

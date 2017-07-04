@@ -54,7 +54,11 @@ void free_layer(layer l)
 
 #ifdef GPU
 
-    if(l.indexes_gpu)           { cuda_free((float *)l.indexes_gpu); l.indexes_gpu = 0;}
+#ifdef CUDA
+    if (l.indexes_gpu)           { cuda_free((float *)l.indexes_gpu); l.indexes_gpu = 0;}
+#else
+    if (l.indexes_gpu)           { cuda_free(l.indexes_gpu); l.indexes_gpu = 0; }
+#endif
 
     if(l.z_gpu)                  { cuda_free(l.z_gpu); l.z_gpu = 0;}
     if(l.r_gpu)                  {  cuda_free(l.r_gpu); l.r_gpu = 0;}

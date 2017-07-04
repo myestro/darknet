@@ -68,7 +68,13 @@ void resize_maxpool_layer(maxpool_layer *l, int w, int h)
     l->delta = (float*)realloc(l->delta, output_size * sizeof(float));
 
     #ifdef GPU
+
+    #ifdef CUDA
     cuda_free((float *)l->indexes_gpu);
+    #else
+    cuda_free(l->indexes_gpu);
+    #endif
+    
     cuda_free(l->output_gpu);
     cuda_free(l->delta_gpu);
     l->indexes_gpu = cuda_make_int_array(output_size);

@@ -255,7 +255,7 @@ void get_detection_boxes(layer l, int w, int h, float thresh, float **probs, box
 void forward_detection_layer_gpu(const detection_layer l, network_state state)
 {
     if(!state.train){
-        copy_ongpu(l.batch*l.inputs, state.input, 1, l.output_gpu, 1);
+        copy_ongpu(l.batch*l.inputs, state.input_gpu, 1, l.output_gpu, 1);
         return;
     }
 
@@ -264,9 +264,9 @@ void forward_detection_layer_gpu(const detection_layer l, network_state state)
     if(state.truth){
         int num_truth = l.batch*l.side*l.side*(1+l.coords+l.classes);
         truth_cpu = (float*)calloc(num_truth, sizeof(float));
-        cuda_pull_array(state.truth, truth_cpu, num_truth);
+        cuda_pull_array(state.truth_gpu, truth_cpu, num_truth);
     }
-    cuda_pull_array(state.input, in_cpu, l.batch*l.inputs);
+    cuda_pull_array(state.input_gpu, in_cpu, l.batch*l.inputs);
     network_state cpu_state = state;
     cpu_state.train = state.train;
     cpu_state.truth = truth_cpu;
@@ -280,8 +280,7 @@ void forward_detection_layer_gpu(const detection_layer l, network_state state)
 
 void backward_detection_layer_gpu(detection_layer l, network_state state)
 {
-    axpy_ongpu(l.batch*l.inputs, 1, l.delta_gpu, 1, state.delta, 1);
-    //copy_ongpu(l.batch*l.inputs, l.delta_gpu, 1, state.delta, 1);
+    axpy_ongpu(l.batch*l.inputs, 1, l.delta_gpu, 1, state.delta_gpu, 1);
 }
 #endif
 

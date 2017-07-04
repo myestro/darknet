@@ -1,6 +1,7 @@
-int gpu_index = 0;
-
 #ifdef GPU
+#ifdef CUDA
+
+int gpu_index = 0;
 
 #include "cuda.h"
 #include "utils.h"
@@ -315,4 +316,5 @@ float cuda_mag_array(float *x_gpu, size_t n)
     return m;
 }
 
+#endif
 #endif

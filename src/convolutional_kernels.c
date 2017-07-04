@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "activations.h"
 #include "convolutional_layer.h"
 #include "batchnorm_layer.h"
 #include "gemm.h"

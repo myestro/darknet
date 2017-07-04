@@ -1,0 +1,552 @@
+mj = 0, mn = 1, *(net->seen) = 32013312
+load_convolutional_weights: l.n*l.c*l.size*l.size = 864
+load_convolutional_weights: l.n*l.c*l.size*l.size = 18432
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 8192
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 11796480
+load_convolutional_weights: l.n*l.c*l.size*l.size = 435200
+Layer: 0 convolutional
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.out is a Catch v1.9.4 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Opencl kernel bash
+  Complete darknet test
+-------------------------------------------------------------------------------
+network_unit.c:64
+...............................................................................
+
+unit.h:80: 
+warning:
+  Array comparision 44212177/44302336(99.7965%)
+  Standard deviation: 2.55604e-14
+
+Layer: 1 maxpool
+unit.h:80: 
+warning:
+  Array comparision 11010073/11075584(99.4085%)
+  Standard deviation: 7.23141e-14
+
+Layer: 2 convolutional
+unit.h:80: 
+warning:
+  Array comparision 21842655/22151168(98.6072%)
+  Standard deviation: 8.95236e-14
+
+Layer: 3 maxpool
+unit.h:80: 
+warning:
+  Array comparision 5371509/5537792(96.9973%)
+  Standard deviation: 1.74611e-13
+
+Layer: 4 convolutional
+unit.h:80: 
+warning:
+  Array comparision 10776592/11075584(97.3004%)
+  Standard deviation: 1.46005e-13
+
+Layer: 5 convolutional
+unit.h:80: 
+warning:
+  Array comparision 4674222/5537792(84.4059%)
+  Standard deviation: 7.56407e-13
+
+unit.h:81: FAILED:
+  CHECK( compare >= threshold )
+with expansion:
+  0.84406f >= 0.9f
+
+Layer: 6 convolutional
+unit.h:80: 
+warning:
+  Array comparision 10764879/11075584(97.1947%)
+  Standard deviation: 1.61341e-13
+
+Layer: 7 maxpool
+unit.h:80: 
+warning:
+  Array comparision 2595305/2768896(93.7307%)
+  Standard deviation: 3.2679e-13
+
+Layer: 8 convolutional
+unit.h:80: 
+warning:
+  Array comparision 5376346/5537792(97.0846%)
+  Standard deviation: 1.52277e-13
+
+Layer: 9 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2364476/2768896(85.3942%)
+  Standard deviation: 6.5792e-13
+
+unit.h:81: FAILED:
+  CHECK( compare >= threshold )
+with expansion:
+  0.85394f >= 0.9f
+
+Layer: 10 convolutional
+unit.h:80: 
+warning:
+  Array comparision 5457557/5537792(98.5511%)
+  Standard deviation: 8.95165e-14
+
+Layer: 11 maxpool
+unit.h:80: 
+warning:
+  Array comparision 1337931/1384448(96.64%)
+  Standard deviation: 1.70007e-13
+
+Layer: 12 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2754500/2768896(99.4801%)
+  Standard deviation: 4.68019e-14
+
+Layer: 13 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1355158/1384448(97.8844%)
+  Standard deviation: 1.30095e-13
+
+Layer: 14 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2753733/2768896(99.4524%)
+  Standard deviation: 6.18845e-14
+
+Layer: 15 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1314766/1384448(94.9668%)
+  Standard deviation: 2.48572e-13
+
+Layer: 16 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2742460/2768896(99.0452%)
+  Standard deviation: 5.16071e-14
+
+Layer: 17 maxpool
+unit.h:80: 
+warning:
+  Array comparision 677168/692224(97.825%)
+  Standard deviation: 1.01675e-13
+
+Layer: 18 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1378649/1384448(99.5811%)
+  Standard deviation: 3.25869e-14
+
+Layer: 19 convolutional
+unit.h:80: 
+warning:
+  Array comparision 673298/692224(97.2659%)
+  Standard deviation: 1.36603e-13
+
+Layer: 20 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1374511/1384448(99.2822%)
+  Standard deviation: 4.96204e-14
+
+Layer: 21 convolutional
+unit.h:80: 
+warning:
+  Array comparision 688792/692224(99.5042%)
+  Standard deviation: 3.24984e-14
+
+Layer: 22 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1288864/1384448(93.0959%)
+  Standard deviation: 6.80092e-13
+
+Layer: 23 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1373245/1384448(99.1908%)
+  Standard deviation: 1.06671e-13
+
+Layer: 24 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1352512/1384448(97.6932%)
+  Standard deviation: 1.61729e-13
+
+Layer: 25 route
+unit.h:80: 
+warning:
+  Array comparision 2742460/2768896(99.0452%)
+  Standard deviation: 5.16071e-14
+
+Layer: 26 convolutional
+unit.h:80: 
+warning:
+  Array comparision 343716/346112(99.3077%)
+  Standard deviation: 1.00313e-13
+
+Layer: 27 reorg
+unit.h:80: 
+warning:
+  Array comparision 343716/346112(99.3077%)
+  Standard deviation: 1.00316e-13
+
+Layer: 28 route
+unit.h:80: 
+warning:
+  Array comparision 1694186/1730560(97.8981%)
+  Standard deviation: 3.16144e-05
+
+Layer: 29 convolutional
+unit.h:80: 
+warning:
+  Array comparision 8233/1384448(0.594677%)
+  Standard deviation: 1.39891e-05
+
+unit.h:81: FAILED:
+  CHECK( compare >= threshold )
+with expansion:
+  0.00595f >= 0.9f
+
+Layer: 30 convolutional
+unit.h:80: 
+warning:
+  Array comparision 455/574600(0.0791855%)
+  Standard deviation: 0.000124261
+
+unit.h:81: FAILED:
+  CHECK( compare >= threshold )
+with expansion:
+  0.00079f >= 0.9f
+
+Layer: 31 region
+unit.h:80: 
+warning:
+  Array comparision 2979/574600(0.518448%)
+  Standard deviation: 0.071189
+
+unit.h:81: FAILED:
+  CHECK( compare >= threshold )
+with expansion:
+  0.00518f >= 0.9f
+
+mj = 0, mn = 1, *(net->seen) = 32013312
+load_convolutional_weights: l.n*l.c*l.size*l.size = 864
+load_convolutional_weights: l.n*l.c*l.size*l.size = 18432
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 8192
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 11796480
+load_convolutional_weights: l.n*l.c*l.size*l.size = 435200
+Layer: 0 convolutional
+-------------------------------------------------------------------------------
+Opencl kernel bash
+  layer test
+-------------------------------------------------------------------------------
+network_unit.c:100
+...............................................................................
+
+unit.h:80: 
+warning:
+  Array comparision 44212177/44302336(99.7965%)
+  Standard deviation: 2.55604e-14
+
+Layer: 1 maxpool
+unit.h:80: 
+warning:
+  Array comparision 11075584/11075584(100%)
+  Standard deviation: 0
+
+Layer: 2 convolutional
+unit.h:80: 
+warning:
+  Array comparision 22151168/22151168(100%)
+  Standard deviation: 5.56178e-15
+
+Layer: 3 maxpool
+unit.h:80: 
+warning:
+  Array comparision 5537792/5537792(100%)
+  Standard deviation: 0
+
+Layer: 4 convolutional
+unit.h:80: 
+warning:
+  Array comparision 11075511/11075584(99.9993%)
+  Standard deviation: 3.34887e-15
+
+Layer: 5 convolutional
+unit.h:80: 
+warning:
+  Array comparision 5537792/5537792(100%)
+  Standard deviation: 1.86465e-15
+
+Layer: 6 convolutional
+unit.h:80: 
+warning:
+  Array comparision 11075584/11075584(100%)
+  Standard deviation: 1.62382e-15
+
+Layer: 7 maxpool
+unit.h:80: 
+warning:
+  Array comparision 2768896/2768896(100%)
+  Standard deviation: 0
+
+Layer: 8 convolutional
+unit.h:80: 
+warning:
+  Array comparision 5537444/5537792(99.9937%)
+  Standard deviation: 1.95989e-15
+
+Layer: 9 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2768896/2768896(100%)
+  Standard deviation: 1.43041e-15
+
+Layer: 10 convolutional
+unit.h:80: 
+warning:
+  Array comparision 5537792/5537792(100%)
+  Standard deviation: 7.20606e-16
+
+Layer: 11 maxpool
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 0
+
+Layer: 12 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2768896/2768896(100%)
+  Standard deviation: 1.34951e-16
+
+Layer: 13 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384395/1384448(99.9962%)
+  Standard deviation: 2.82179e-15
+
+Layer: 14 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2768896/2768896(100%)
+  Standard deviation: 1.17259e-16
+
+Layer: 15 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 1.40515e-15
+
+Layer: 16 convolutional
+unit.h:80: 
+warning:
+  Array comparision 2768896/2768896(100%)
+  Standard deviation: 1.08541e-16
+
+Layer: 17 maxpool
+unit.h:80: 
+warning:
+  Array comparision 692224/692224(100%)
+  Standard deviation: 0
+
+Layer: 18 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 2.66206e-16
+
+Layer: 19 convolutional
+unit.h:80: 
+warning:
+  Array comparision 691562/692224(99.9044%)
+  Standard deviation: 1.23984e-14
+
+Layer: 20 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 3.33026e-16
+
+Layer: 21 convolutional
+unit.h:80: 
+warning:
+  Array comparision 692022/692224(99.9708%)
+  Standard deviation: 4.09063e-15
+
+Layer: 22 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1381884/1384448(99.8148%)
+  Standard deviation: 2.66799e-14
+
+Layer: 23 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 5.22448e-17
+
+Layer: 24 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 2.29252e-16
+
+Layer: 25 route
+unit.h:80: 
+warning:
+  Array comparision 2768896/2768896(100%)
+  Standard deviation: 1.08541e-16
+
+Layer: 26 convolutional
+unit.h:80: 
+warning:
+  Array comparision 346112/346112(100%)
+  Standard deviation: 5.02351e-16
+
+Layer: 27 reorg
+unit.h:80: 
+warning:
+  Array comparision 346112/346112(100%)
+  Standard deviation: 0
+
+Layer: 28 route
+unit.h:80: 
+warning:
+  Array comparision 1728512/1730560(99.8817%)
+  Standard deviation: 0.000392687
+
+Layer: 29 convolutional
+unit.h:80: 
+warning:
+  Array comparision 1384448/1384448(100%)
+  Standard deviation: 1.39666e-16
+
+Layer: 30 convolutional
+unit.h:80: 
+warning:
+  Array comparision 574328/574600(99.9527%)
+  Standard deviation: 3.67372e-05
+
+Layer: 31 region
+unit.h:80: 
+warning:
+  Array comparision 573003/574600(99.7221%)
+  Standard deviation: 0.000400589
+
+mj = 0, mn = 1, *(net->seen) = 32013312
+load_convolutional_weights: l.n*l.c*l.size*l.size = 864
+load_convolutional_weights: l.n*l.c*l.size*l.size = 18432
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 8192
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 11796480
+load_convolutional_weights: l.n*l.c*l.size*l.size = 435200
+pottedplant: 26%
+truck: 74%
+bicycle: 25%
+dog: 81%
+bicycle: 83%
+mj = 0, mn = 1, *(net->seen) = 32013312
+load_convolutional_weights: l.n*l.c*l.size*l.size = 864
+load_convolutional_weights: l.n*l.c*l.size*l.size = 18432
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 8192
+load_convolutional_weights: l.n*l.c*l.size*l.size = 73728
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 294912
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 131072
+load_convolutional_weights: l.n*l.c*l.size*l.size = 1179648
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 524288
+load_convolutional_weights: l.n*l.c*l.size*l.size = 4718592
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 9437184
+load_convolutional_weights: l.n*l.c*l.size*l.size = 32768
+load_convolutional_weights: l.n*l.c*l.size*l.size = 11796480
+load_convolutional_weights: l.n*l.c*l.size*l.size = 435200
+pottedplant: 28%
+sports ball: 28%
+sports ball: 34%
+sports ball: 41%
+truck: 74%
+bicycle: 27%
+dog: 30%
+dog: 31%
+dog: 28%
+dog: 83%
+dog: 32%
+dog: 44%
+bicycle: 80%
+diningtable: 26%
+bed: 31%
+bus: 8076%
+skis: 1833%
+orange: 2234%
+carrot: 2503%
+===============================================================================
+test cases:  1 |  0 passed | 1 failed
+assertions: 64 | 59 passed | 5 failed
+

@@ -51,13 +51,13 @@ void backward_activation_layer(layer l, network_state state)
 
 void forward_activation_layer_gpu(layer l, network_state state)
 {
-    copy_ongpu(l.outputs*l.batch, state.input, 1, l.output_gpu, 1);
+    copy_ongpu(l.outputs*l.batch, state.input_gpu, 1, l.output_gpu, 1);
     activate_array_ongpu(l.output_gpu, l.outputs*l.batch, l.activation);
 }
 
 void backward_activation_layer_gpu(layer l, network_state state)
 {
     gradient_array_ongpu(l.output_gpu, l.outputs*l.batch, l.activation, l.delta_gpu);
-    copy_ongpu(l.outputs*l.batch, l.delta_gpu, 1, state.delta, 1);
+    copy_ongpu(l.outputs*l.batch, l.delta_gpu, 1, state.delta_gpu, 1);
 }
 #endif

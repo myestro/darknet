@@ -165,29 +165,76 @@ void gemm_cpu(int TA, int TB, int M, int N, int K, float ALPHA,
 
 #include <math.h>
 
+#ifdef CUDA
 void gemm_ongpu(int TA, int TB, int M, int N, int K, float ALPHA, 
-        float *A_gpu, int lda, 
-        float *B_gpu, int ldb,
+        float *A_gpu, int offset_A, int lda, 
+        float *B_gpu, int offset_B, int ldb,
         float BETA,
-        float *C_gpu, int ldc)
+        float *C_gpu, int offset_C, int ldc)
 {
     cublasHandle_t handle = blas_handle();
     cublasStatus_t status = cublasSgemm(handle, (TB ? CUBLAS_OP_T : CUBLAS_OP_N), 
-            (TA ? CUBLAS_OP_T : CUBLAS_OP_N), N, M, K, &ALPHA, B_gpu, ldb, A_gpu, lda, &BETA, C_gpu, ldc);
+            (TA ? CUBLAS_OP_T : CUBLAS_OP_N), N, M, K, &ALPHA, B_gpu + offset_B, ldb, A_gpu + offset_A, lda, &BETA, C_gpu + offset_C, ldc);
     check_cublas_error(status);
 }
+#endif
+
+#ifdef OPENCL
+
+#include <clBLAS.h>
+
+void gemm_kernel_init(void)
+{
+    cl_int clErr;
+    clErr = clblasSetup();
+
+    if (clErr != CL_SUCCESS)
+    {
+        printf("gemm_kernel_init: Could not setup clBLAS. Errorcode: %d\n", clErr);
+    }
+}
+
+void gemm_kernel_release(void)
+{
+    clblasTeardown();
+}
+
+void gemm_ongpu(int TA, int TB, int M, int N, int K, float ALPHA, 
+        GPU_DATA A_gpu, int offset_A, int lda, 
+        GPU_DATA B_gpu, int offset_B, int ldb,
+        float BETA,
+        GPU_DATA C_gpu, int offset_C, int ldc)
+{
+    cl_int clErr;
+
+    clErr = clblasSgemm(clblasRowMajor,
+        (TB ? clblasTrans : clblasNoTrans),
+        (TA ? clblasTrans : clblasNoTrans),
+        M, N, K, ALPHA,
+        A_gpu, offset_A, lda,
+        B_gpu, offset_B, ldb,
+        BETA,
+        C_gpu, offset_C, ldc,
+        1, &opencl_queue, 0, NULL, NULL);
+
+    if (clErr != CL_SUCCESS)
+    {
+        printf("gemm_ongpu: clblasSgemm failed. Errorcode: %d\n", clErr);
+    }
+}
+#endif
 
 void gemm_gpu(int TA, int TB, int M, int N, int K, float ALPHA, 
-        float *A, int lda, 
-        float *B, int ldb,
+        float *A, int offset_A, int lda, 
+        float *B, int offset_B, int ldb,
         float BETA,
-        float *C, int ldc)
+        float *C, int offset_C, int ldc)
 {
-    float *A_gpu = cuda_make_array(A, (TA ? lda*K:lda*M));
-    float *B_gpu = cuda_make_array(B, (TB ? ldb*N : ldb*K));
-    float *C_gpu = cuda_make_array(C, ldc*M);
+    GPU_DATA A_gpu = cuda_make_array(A, (TA ? lda*K:lda*M));
+    GPU_DATA B_gpu = cuda_make_array(B, (TB ? ldb*N : ldb*K));
+    GPU_DATA C_gpu = cuda_make_array(C, ldc*M);
 
-    gemm_ongpu(TA, TB, M, N, K, ALPHA, A_gpu, lda, B_gpu, ldb, BETA, C_gpu, ldc);
+    gemm_ongpu(TA, TB, M, N, K, ALPHA, A_gpu, offset_A, lda, B_gpu, offset_B, ldb, BETA, C_gpu, offset_C, ldc);
 
     cuda_pull_array(C_gpu, C, ldc*M);
     cuda_free(A_gpu);
@@ -199,6 +246,8 @@ void gemm_gpu(int TA, int TB, int M, int N, int K, float ALPHA,
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#ifdef CUDA
 
 void time_gpu_random_matrix(int TA, int TB, int m, int k, int n)
 {
@@ -334,5 +383,6 @@ int test_gpu_blas()
 
     return 0;
 }
+#endif
 #endif
 

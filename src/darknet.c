@@ -25,7 +25,7 @@ extern void run_dice(int argc, char **argv);
 extern void run_compare(int argc, char **argv);
 extern void run_classifier(int argc, char **argv);
 extern void run_regressor(int argc, char **argv);
-extern void run_char_rnn(int argc, char **argv);
+//extern void run_char_rnn(int argc, char **argv);
 extern void run_vid_rnn(int argc, char **argv);
 extern void run_tag(int argc, char **argv);
 extern void run_cifar(int argc, char **argv);
@@ -384,6 +384,8 @@ int main(int argc, char **argv)
     if(gpu_index >= 0){
         cuda_set_device(gpu_index);
     }
+
+    opencl_init(NULL, NULL, NULL);
 #endif
 
     if (0 == strcmp(argv[1], "average")){
@@ -407,7 +409,8 @@ int main(int argc, char **argv)
     } else if (0 == strcmp(argv[1], "go")){
         run_go(argc, argv);
     } else if (0 == strcmp(argv[1], "rnn")){
-        run_char_rnn(argc, argv);
+        printf("Sorry, rnn's do not support opencl.\n");
+        //run_char_rnn(argc, argv);
     } else if (0 == strcmp(argv[1], "vid")){
         run_vid_rnn(argc, argv);
     } else if (0 == strcmp(argv[1], "coco")){
@@ -467,6 +470,9 @@ int main(int argc, char **argv)
     } else {
         fprintf(stderr, "Not an option: %s\n", argv[1]);
     }
+
+    opencl_deinit();
+
     return 0;
 }
 

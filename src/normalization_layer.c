@@ -115,26 +115,27 @@ void forward_normalization_layer_gpu(const layer layer, network_state state)
     scal_ongpu(w*h*c*layer.batch, 0, layer.squared_gpu, 1);
 
     for(b = 0; b < layer.batch; ++b){
-        float *squared = layer.squared_gpu + w*h*c*b;
-        float *norms   = layer.norms_gpu + w*h*c*b;
-        float *input   = state.input + w*h*c*b;
-        pow_ongpu(w*h*c, 2, input, 1, squared, 1);
+        const int offset = w*h*c*b;
+        GPU_DATA squared = layer.squared_gpu;
+        GPU_DATA norms   = layer.norms_gpu;
+        GPU_DATA input   = state.input_gpu;
+        pow_ongpu_offset(w*h*c, 2, input, offset, 1, squared, offset, 1);
 
-        const_ongpu(w*h, layer.kappa, norms, 1);
+        const_ongpu_offset(w*h, layer.kappa, norms, offset, 1);
         for(k = 0; k < layer.size/2; ++k){
-            axpy_ongpu(w*h, layer.alpha, squared + w*h*k, 1, norms, 1);
+            axpy_ongpu_offset(w*h, layer.alpha, squared, offset + w*h*k, 1, norms, offset, 1);
         }
 
         for(k = 1; k < layer.c; ++k){
-            copy_ongpu(w*h, norms + w*h*(k-1), 1, norms + w*h*k, 1);
+            copy_ongpu_offset(w*h, norms, offset + w*h*(k-1), 1, norms, offset + w*h*k, 1);
             int prev = k - ((layer.size-1)/2) - 1;
             int next = k + (layer.size/2);
-            if(prev >= 0)      axpy_ongpu(w*h, -layer.alpha, squared + w*h*prev, 1, norms + w*h*k, 1);
-            if(next < layer.c) axpy_ongpu(w*h,  layer.alpha, squared + w*h*next, 1, norms + w*h*k, 1);
+            if(prev >= 0)      axpy_ongpu_offset(w*h, -layer.alpha, squared, offset + w*h*prev, 1, norms, offset + w*h*k, 1);
+            if(next < layer.c) axpy_ongpu_offset(w*h,  layer.alpha, squared, offset + w*h*next, 1, norms, offset + w*h*k, 1);
         }
     }
     pow_ongpu(w*h*c*layer.batch, -layer.beta, layer.norms_gpu, 1, layer.output_gpu, 1);
-    mul_ongpu(w*h*c*layer.batch, state.input, 1, layer.output_gpu, 1);
+    mul_ongpu(w*h*c*layer.batch, state.input_gpu, 1, layer.output_gpu, 1);
 }
 
 void backward_normalization_layer_gpu(const layer layer, network_state state)
@@ -144,7 +145,7 @@ void backward_normalization_layer_gpu(const layer layer, network_state state)
     int w = layer.w;
     int h = layer.h;
     int c = layer.c;
-    pow_ongpu(w*h*c*layer.batch, -layer.beta, layer.norms_gpu, 1, state.delta, 1);
-    mul_ongpu(w*h*c*layer.batch, layer.delta_gpu, 1, state.delta, 1);
+    pow_ongpu(w*h*c*layer.batch, -layer.beta, layer.norms_gpu, 1, state.delta_gpu, 1);
+    mul_ongpu(w*h*c*layer.batch, layer.delta_gpu, 1, state.delta_gpu, 1);
 }
 #endif

@@ -165,8 +165,8 @@ network make_network(int n)
     net.layers = (layer*)calloc(net.n, sizeof(layer));
     net.seen = (int*)calloc(1, sizeof(int));
     #ifdef GPU
-    net.input_gpu = (float**)calloc(1, sizeof(float *));
-    net.truth_gpu = (float**)calloc(1, sizeof(float *));
+    net.input_gpu = (GPU_DATA *)calloc(1, sizeof(GPU_DATA));
+    net.truth_gpu = (GPU_DATA *)calloc(1, sizeof(GPU_DATA));
     #endif
     return net;
 }
@@ -353,9 +353,7 @@ int resize_network(network *net, int w, int h)
 {
 #ifdef GPU
     cuda_set_device(net->gpu_index);
-    if(gpu_index >= 0){
-        cuda_free(net->workspace);
-    }
+
 #ifdef _ENABLE_CUDA_MEM_DEBUG
     cuda_dump_mem_stat();
 #endif
@@ -407,11 +405,13 @@ int resize_network(network *net, int w, int h)
             cuda_free(*net->truth_gpu);
             *net->truth_gpu = 0;
         }
-        net->workspace = cuda_make_array(0, (workspace_size-1)/sizeof(float)+1);
-    }else {
-        free(net->workspace);
-        net->workspace = (float*) calloc(1, workspace_size);
+
+        cuda_free(net->workspace_gpu);
+        net->workspace_gpu = cuda_make_array(0, (workspace_size-1)/sizeof(float)+1);
     }
+
+    free(net->workspace);
+    net->workspace = (float*) calloc(1, workspace_size);
 #else
     free(net->workspace);
     net->workspace = (float*)calloc(1, workspace_size);
@@ -644,12 +644,10 @@ void free_network(network net)
     if (net.workspace_size)
     {
 #ifdef GPU
-        if (net.gpu_index >= 0){
-            cuda_free(net.workspace);
-        }
-        else {
-            free(net.workspace);
-        }
+        if (net.gpu_index >= 0)
+            cuda_free(net.workspace_gpu);
+
+        free(net.workspace);
 #else
         free(net.workspace);
 #endif

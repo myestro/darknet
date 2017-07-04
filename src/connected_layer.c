@@ -276,15 +276,15 @@ void forward_connected_layer_gpu(connected_layer l, network_state state)
     int m = l.batch;
     int k = l.inputs;
     int n = l.outputs;
-    float * a = state.input;
-    float * b = l.weights_gpu;
-    float * c = l.output_gpu;
-    gemm_ongpu(0,1,m,n,k,1,a,k,b,k,1,c,n);
+    GPU_DATA a = state.input_gpu;
+    GPU_DATA b = l.weights_gpu;
+    GPU_DATA c = l.output_gpu;
+    gemm_ongpu(0,1,m,n,k,1,a,0,k,b,0,k,1,c,0,n);
     if(l.batch_normalize){
         forward_batchnorm_layer_gpu(l, state);
     }
     for(i = 0; i < l.batch; ++i){
-        axpy_ongpu(l.outputs, 1, l.biases_gpu, 1, l.output_gpu + i*l.outputs, 1);
+        axpy_ongpu_offset(l.outputs, 1, l.biases_gpu, 0, 1, l.output_gpu, i*l.outputs, 1);
     }
     activate_array_ongpu(l.output_gpu, l.outputs*l.batch, l.activation);
 }
@@ -295,7 +295,7 @@ void backward_connected_layer_gpu(connected_layer l, network_state state)
     constrain_ongpu(l.outputs*l.batch, 1, l.delta_gpu, 1);
     gradient_array_ongpu(l.output_gpu, l.outputs*l.batch, l.activation, l.delta_gpu);
     for(i = 0; i < l.batch; ++i){
-        axpy_ongpu(l.outputs, 1, l.delta_gpu + i*l.outputs, 1, l.bias_updates_gpu, 1);
+        axpy_ongpu_offset(l.outputs, 1, l.delta_gpu, i*l.outputs, 1, l.bias_updates_gpu, 0, 1);
     }
 
     if(l.batch_normalize){
@@ -305,10 +305,10 @@ void backward_connected_layer_gpu(connected_layer l, network_state state)
     int m = l.outputs;
     int k = l.batch;
     int n = l.inputs;
-    float * a = l.delta_gpu;
-    float * b = state.input;
-    float * c = l.weight_updates_gpu;
-    gemm_ongpu(1,0,m,n,k,1,a,m,b,n,1,c,n);
+    GPU_DATA a = l.delta_gpu;
+    GPU_DATA b = state.input_gpu;
+    GPU_DATA c = l.weight_updates_gpu;
+    gemm_ongpu(1,0,m,n,k,1,a,0,m,b,0,n,1,c,0,n);
 
     m = l.batch;
     k = l.outputs;
@@ -316,8 +316,8 @@ void backward_connected_layer_gpu(connected_layer l, network_state state)
 
     a = l.delta_gpu;
     b = l.weights_gpu;
-    c = state.delta;
+    c = state.delta_gpu;
 
-    if(c) gemm_ongpu(0,0,m,n,k,1,a,k,b,n,1,c,n);
+    if(c) gemm_ongpu(0,0,m,n,k,1,a,0,k,b,0,n,1,c,0,n);
 }
 #endif

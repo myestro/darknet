@@ -20,6 +20,9 @@ void resize_dropout_layer(dropout_layer *l, int inputs);
 void forward_dropout_layer_gpu(dropout_layer l, network_state state);
 void backward_dropout_layer_gpu(dropout_layer l, network_state state);
 
+void dropout_kernels_init(void);
+void dropout_kernels_release(void);
+
 #endif
 
 #ifdef __cplusplus

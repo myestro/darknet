@@ -15,6 +15,13 @@ typedef enum {
 
 typedef struct network{
     float *workspace;
+
+#ifdef GPU
+#ifdef OPENCL
+    cl_mem workspace_gpu;
+#endif
+#endif
+
 #ifdef _ENABLE_COOLVISION_93b0d61c8570df0292b51b3c0fc8d23655274eb5
     size_t workspace_size;
 #endif
@@ -62,16 +69,31 @@ typedef struct network{
     tree *hierarchy;
 
     #ifdef GPU
-    float **input_gpu;
-    float **truth_gpu;
+#ifdef CUDA
+    float** input_gpu;
+    float** truth_gpu;
+#else
+    cl_mem *input_gpu;
+    cl_mem *truth_gpu;
+#endif
     #endif
 } network;
 
 typedef struct network_state {
-    float *truth;
-    float *input;
-    float *delta;
-    float *workspace;
+    float* truth;
+    float* input;
+    float* delta;
+    float* workspace;
+
+#ifdef GPU
+#ifdef OPENCL
+    GPU_DATA truth_gpu;
+    GPU_DATA input_gpu;
+    GPU_DATA delta_gpu;
+    GPU_DATA workspace_gpu;
+#endif
+#endif
+
     int train;
     int index;
     network net;
@@ -85,10 +107,10 @@ extern "C" {
 float train_networks(network *nets, int n, data d, int interval);
 void sync_nets(network *nets, int n, int interval);
 float train_network_datum_gpu(network net, float *x, float *y);
-float *network_predict_gpu(network net, float *input);
-float * get_network_output_gpu_layer(network net, int i);
-float * get_network_delta_gpu_layer(network net, int i);
-float *get_network_output_gpu(network net);
+float* network_predict_gpu(network net, float *input);
+float*  get_network_output_gpu_layer(network net, int i);
+float*  get_network_delta_gpu_layer(network net, int i);
+float* get_network_output_gpu(network net);
 void forward_network_gpu(network net, network_state state);
 void backward_network_gpu(network net, network_state state);
 void update_network_gpu(network net);

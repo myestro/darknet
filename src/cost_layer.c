@@ -123,19 +123,19 @@ void forward_cost_layer_gpu(cost_layer l, network_state state)
 {
     if (!state.truth) return;
     if(l.smooth){
-        scal_ongpu(l.batch*l.inputs, (1-l.smooth), state.truth, 1);
-        add_ongpu(l.batch*l.inputs, l.smooth * 1./l.inputs, state.truth, 1);
+        scal_ongpu(l.batch*l.inputs, (1-l.smooth), state.truth_gpu, 1);
+        add_ongpu(l.batch*l.inputs, l.smooth * 1./l.inputs, state.truth_gpu, 1);
     }
     if (l.cost_type == MASKED) {
-        mask_ongpu(l.batch*l.inputs, state.input, SECRET_NUM, state.truth);
+        mask_ongpu(l.batch*l.inputs, state.input_gpu, SECRET_NUM, state.truth_gpu);
     }
 
     if(l.cost_type == SMOOTH){
-        smooth_l1_gpu(l.batch*l.inputs, state.input, state.truth, l.delta_gpu, l.output_gpu);
+        smooth_l1_gpu(l.batch*l.inputs, state.input_gpu, state.truth_gpu, l.delta_gpu, l.output_gpu);
     } else if (l.cost_type == L1){
-        l1_gpu(l.batch*l.inputs, state.input, state.truth, l.delta_gpu, l.output_gpu);
+        l1_gpu(l.batch*l.inputs, state.input_gpu, state.truth_gpu, l.delta_gpu, l.output_gpu);
     } else {
-        l2_gpu(l.batch*l.inputs, state.input, state.truth, l.delta_gpu, l.output_gpu);
+        l2_gpu(l.batch*l.inputs, state.input_gpu, state.truth_gpu, l.delta_gpu, l.output_gpu);
     }
 
     if(l.ratio){
@@ -158,7 +158,7 @@ void forward_cost_layer_gpu(cost_layer l, network_state state)
 
 void backward_cost_layer_gpu(const cost_layer l, network_state state)
 {
-    axpy_ongpu(l.batch*l.inputs, l.scale, l.delta_gpu, 1, state.delta, 1);
+    axpy_ongpu(l.batch*l.inputs, l.scale, l.delta_gpu, 1, state.delta_gpu, 1);
 }
 #endif
 

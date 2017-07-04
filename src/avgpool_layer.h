@@ -22,6 +22,9 @@ extern "C" {
 void forward_avgpool_layer_gpu(avgpool_layer l, network_state state);
 void backward_avgpool_layer_gpu(avgpool_layer l, network_state state);
 
+void avgpool_kernel_init(void);
+void avgpool_kernel_release(void);
+
 #ifdef __cplusplus 
 }
 #endif

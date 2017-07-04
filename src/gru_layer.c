@@ -10,22 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void increment_layer(layer *l, int steps)
-{
-    int num = l->outputs*l->batch*steps;
-    l->output += num;
-    l->delta += num;
-    l->x += num;
-    l->x_norm += num;
-
-#ifdef GPU
-    l->output_gpu += num;
-    l->delta_gpu += num;
-    l->x_gpu += num;
-    l->x_norm_gpu += num;
-#endif
-}
-
 layer make_gru_layer(int batch, int inputs, int outputs, int steps, int batch_normalize)
 {
     fprintf(stderr, "GRU Layer: %d inputs, %d outputs\n", inputs, outputs);
@@ -90,9 +74,12 @@ layer make_gru_layer(int batch, int inputs, int outputs, int steps, int batch_no
     l.update = update_gru_layer;
 
 #ifdef GPU
+
+#ifndef OPENCL
     l.forward_gpu = forward_gru_layer_gpu;
     l.backward_gpu = backward_gru_layer_gpu;
     l.update_gpu = update_gru_layer_gpu;
+#endif
 
     l.forgot_state_gpu = cuda_make_array(l.output, batch*outputs);
     l.forgot_delta_gpu = cuda_make_array(l.output, batch*outputs);
@@ -100,12 +87,30 @@ layer make_gru_layer(int batch, int inputs, int outputs, int steps, int batch_no
     l.state_gpu = cuda_make_array(l.output, batch*outputs);
     l.output_gpu = cuda_make_array(l.output, batch*outputs*steps);
     l.delta_gpu = cuda_make_array(l.delta, batch*outputs*steps);
-    l.r_gpu = cuda_make_array(l.output_gpu, batch*outputs);
-    l.z_gpu = cuda_make_array(l.output_gpu, batch*outputs);
-    l.h_gpu = cuda_make_array(l.output_gpu, batch*outputs);
+    l.r_gpu = cuda_make_array(l.output/*_gpu*/, batch*outputs);
+    l.z_gpu = cuda_make_array(l.output/*_gpu*/, batch*outputs);
+    l.h_gpu = cuda_make_array(l.output/*_gpu*/, batch*outputs);
 #endif
 
     return l;
+}
+
+static void increment_layer(layer *l, int steps)
+{
+    int num = l->outputs*l->batch*steps;
+    l->output += num;
+    l->delta += num;
+    l->x += num;
+    l->x_norm += num;
+
+#ifdef GPU
+#ifndef OPENCL
+    l->output_gpu += num;
+    l->delta_gpu += num;
+    l->x_gpu += num;
+    l->x_norm_gpu += num;
+#endif
+#endif
 }
 
 void update_gru_layer(layer l, int batch, float learning_rate, float momentum, float decay)
@@ -196,6 +201,7 @@ void backward_gru_layer(layer l, network_state state)
 }
 
 #ifdef GPU
+#ifndef OPENCL
 
 void pull_gru_layer(layer l)
 {
@@ -392,4 +398,5 @@ void backward_gru_layer_gpu(layer l, network_state state)
         increment_layer(&state_h_layer, -1);
     }
 }
+#endif
 #endif

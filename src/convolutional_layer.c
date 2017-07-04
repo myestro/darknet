@@ -22,12 +22,6 @@ void swap_binary(convolutional_layer *l)
     float *swap = l->weights;
     l->weights = l->binary_weights;
     l->binary_weights = swap;
-
-#ifdef GPU
-    swap = l->weights_gpu;
-    l->weights_gpu = l->binary_weights_gpu;
-    l->binary_weights_gpu = swap;
-#endif
 }
 
 void binarize_weights(float *weights, int n, int size, float *binary)

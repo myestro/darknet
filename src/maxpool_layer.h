@@ -19,6 +19,12 @@ void forward_maxpool_layer(const maxpool_layer l, network_state state);
 void backward_maxpool_layer(const maxpool_layer l, network_state state);
 
 #ifdef GPU
+
+#ifdef OPENCL
+void maxpool_kernel_init(void);
+void maxpool_kernel_release(void);
+#endif
+
 void forward_maxpool_layer_gpu(maxpool_layer l, network_state state);
 void backward_maxpool_layer_gpu(maxpool_layer l, network_state state);
 #endif

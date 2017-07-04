@@ -1,3 +1,5 @@
+#ifndef OPENCL
+
 #include "network.h"
 #include "cost_layer.h"
 #include "utils.h"
@@ -490,3 +492,5 @@ void run_char_rnn(int argc, char **argv)
     else if(0==strcmp(argv[2], "generate")) test_char_rnn(cfg, weights, len, seed, temp, rseed, tokens);
     else if(0==strcmp(argv[2], "generatetactic")) test_tactic_rnn(cfg, weights, len, temp, rseed, tokens);
 }
+
+#endif

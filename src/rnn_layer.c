@@ -10,22 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void increment_layer(layer *l, int steps)
-{
-    int num = l->outputs*l->batch*steps;
-    l->output += num;
-    l->delta += num;
-    l->x += num;
-    l->x_norm += num;
-
-#ifdef GPU
-    l->output_gpu += num;
-    l->delta_gpu += num;
-    l->x_gpu += num;
-    l->x_norm_gpu += num;
-#endif
-}
-
 layer make_rnn_layer(int batch, int inputs, int hidden, int outputs, int steps, ACTIVATION activation, int batch_normalize, int log)
 {
     fprintf(stderr, "RNN Layer: %d inputs, %d outputs\n", inputs, outputs);
@@ -61,16 +45,39 @@ layer make_rnn_layer(int batch, int inputs, int hidden, int outputs, int steps, 
     l.forward = forward_rnn_layer;
     l.backward = backward_rnn_layer;
     l.update = update_rnn_layer;
+
 #ifdef GPU
+
+#ifndef OPENCL
     l.forward_gpu = forward_rnn_layer_gpu;
     l.backward_gpu = backward_rnn_layer_gpu;
     l.update_gpu = update_rnn_layer_gpu;
+#endif
+
     l.state_gpu = cuda_make_array(l.state, batch*hidden*(steps+1));
     l.output_gpu = l.output_layer->output_gpu;
     l.delta_gpu = l.output_layer->delta_gpu;
 #endif
 
     return l;
+}
+
+static void increment_layer(layer *l, int steps)
+{
+    int num = l->outputs*l->batch*steps;
+    l->output += num;
+    l->delta += num;
+    l->x += num;
+    l->x_norm += num;
+
+#ifdef GPU
+#ifndef OPENCL
+    l->output_gpu += num;
+    l->delta_gpu += num;
+    l->x_gpu += num;
+    l->x_norm_gpu += num;
+#endif
+#endif
 }
 
 void update_rnn_layer(layer l, int batch, float learning_rate, float momentum, float decay)
@@ -172,6 +179,7 @@ void backward_rnn_layer(layer l, network_state state)
 }
 
 #ifdef GPU
+#ifndef OPENCL
 
 void pull_rnn_layer(layer l)
 {
@@ -274,4 +282,5 @@ void backward_rnn_layer_gpu(layer l, network_state state)
         increment_layer(&output_layer, -1);
     }
 }
+#endif
 #endif

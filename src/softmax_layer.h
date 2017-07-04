@@ -14,6 +14,9 @@ void backward_softmax_layer(const softmax_layer l, network_state state);
 void pull_softmax_layer_output(const softmax_layer l);
 void forward_softmax_layer_gpu(const softmax_layer l, network_state state);
 void backward_softmax_layer_gpu(const softmax_layer l, network_state state);
+
+void softmax_kernel_init(void);
+void softmax_kernel_release(void);
 #endif
 
 #endif

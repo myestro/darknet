@@ -137,18 +137,18 @@ void forward_reorg_layer_gpu(layer l, network_state state)
     int i;
     if(l.flatten){
         if(l.reverse){
-            flatten_ongpu(state.input, l.w*l.h, l.c, l.batch, 0, l.output_gpu);
+            flatten_ongpu(state.input_gpu, l.w*l.h, l.c, l.batch, 0, l.output_gpu);
         }else{
-            flatten_ongpu(state.input, l.w*l.h, l.c, l.batch, 1, l.output_gpu);
+            flatten_ongpu(state.input_gpu, l.w*l.h, l.c, l.batch, 1, l.output_gpu);
         }
     } else if (l.extra) {
         for(i = 0; i < l.batch; ++i){
-            copy_ongpu(l.inputs, state.input + i*l.inputs, 1, l.output_gpu + i*l.outputs, 1);
+            copy_ongpu_offset(l.inputs, state.input_gpu, i*l.inputs, 1, l.output_gpu, i*l.outputs, 1);
         }
     } else if (l.reverse) {
-        reorg_ongpu(state.input, l.w, l.h, l.c, l.batch, l.stride, 1, l.output_gpu);
+        reorg_ongpu(state.input_gpu, l.w, l.h, l.c, l.batch, l.stride, 1, l.output_gpu);
     }else {
-        reorg_ongpu(state.input, l.w, l.h, l.c, l.batch, l.stride, 0, l.output_gpu);
+        reorg_ongpu(state.input_gpu, l.w, l.h, l.c, l.batch, l.stride, 0, l.output_gpu);
     }
 }
 
@@ -156,19 +156,19 @@ void backward_reorg_layer_gpu(layer l, network_state state)
 {
     if(l.flatten){
         if(l.reverse){
-            flatten_ongpu(l.delta_gpu, l.w*l.h, l.c, l.batch, 1, state.delta);
+            flatten_ongpu(l.delta_gpu, l.w*l.h, l.c, l.batch, 1, state.delta_gpu);
         }else{
-            flatten_ongpu(l.delta_gpu, l.w*l.h, l.c, l.batch, 0, state.delta);
+            flatten_ongpu(l.delta_gpu, l.w*l.h, l.c, l.batch, 0, state.delta_gpu);
         }
     } else if (l.extra) {
         int i;
         for(i = 0; i < l.batch; ++i){
-            copy_ongpu(l.inputs, l.delta_gpu + i*l.outputs, 1, state.delta + i*l.inputs, 1);
+            copy_ongpu_offset(l.inputs, l.delta_gpu, i*l.outputs, 1, state.delta_gpu, i*l.inputs, 1);
         }
     } else if(l.reverse){
-        reorg_ongpu(l.delta_gpu, l.w, l.h, l.c, l.batch, l.stride, 0, state.delta);
+        reorg_ongpu(l.delta_gpu, l.w, l.h, l.c, l.batch, l.stride, 0, state.delta_gpu);
     } else {
-        reorg_ongpu(l.delta_gpu, l.w, l.h, l.c, l.batch, l.stride, 1, state.delta);
+        reorg_ongpu(l.delta_gpu, l.w, l.h, l.c, l.batch, l.stride, 1, state.delta_gpu);
     }
 }
 #endif

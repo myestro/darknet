@@ -195,8 +195,10 @@ convolutional_layer parse_convolutional(list *options, size_params params)
     return layer;
 }
 
+
 layer parse_crnn(list *options, size_params params)
 {
+#ifndef OPENCL
     int output_filters = option_find_int(options, "output_filters",1);
     int hidden_filters = option_find_int(options, "hidden_filters",1);
     char *activation_s = option_find_str(options, "activation", "logistic");
@@ -208,10 +210,15 @@ layer parse_crnn(list *options, size_params params)
     l.shortcut = option_find_int_quiet(options, "shortcut", 0);
 
     return l;
+#else
+    printf("Sorry, crnn layers have no opencl support.\n");
+    exit(EXIT_FAILURE);
+#endif
 }
 
 layer parse_rnn(list *options, size_params params)
 {
+#ifndef OPENCL
     int output = option_find_int(options, "output",1);
     int hidden = option_find_int(options, "hidden",1);
     char *activation_s = option_find_str(options, "activation", "logistic");
@@ -224,16 +231,25 @@ layer parse_rnn(list *options, size_params params)
     l.shortcut = option_find_int_quiet(options, "shortcut", 0);
 
     return l;
+#else
+    printf("Sorry, rnn layers have no opencl support.\n");
+    exit(EXIT_FAILURE);
+#endif
 }
 
 layer parse_gru(list *options, size_params params)
 {
+#ifndef OPENCL
     int output = option_find_int(options, "output",1);
     int batch_normalize = option_find_int_quiet(options, "batch_normalize", 0);
 
     layer l = make_gru_layer(params.batch, params.inputs, output, params.time_steps, batch_normalize);
 
     return l;
+#else
+    printf("Sorry, gru layers have no opencl support.\n");
+    exit(EXIT_FAILURE);
+#endif
 }
 
 connected_layer parse_connected(list *options, size_params params)
@@ -726,11 +742,10 @@ network parse_network_cfg(char *filename)
     if(workspace_size){
         //printf("%ld\n", workspace_size);
 #ifdef GPU
-        if(gpu_index >= 0){
-            net.workspace = cuda_make_array(0, (workspace_size-1)/sizeof(float)+1);
-        }else {
-            net.workspace = (float*)calloc(1, workspace_size);
-        }
+        if(gpu_index >= 0)
+            net.workspace_gpu = cuda_make_array(0, (workspace_size-1)/sizeof(float)+1);
+
+        net.workspace = (float*)calloc(1, workspace_size);
 #else
         net.workspace = (float*)calloc(1, workspace_size);
 #endif

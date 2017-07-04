@@ -11,6 +11,10 @@ void forward_activation_layer(layer l, network_state state);
 void backward_activation_layer(layer l, network_state state);
 
 #ifdef GPU
+#ifdef OPENCL
+void activation_kernels_init(void);
+void activation_kernels_release(void);
+#endif
 void forward_activation_layer_gpu(layer l, network_state state);
 void backward_activation_layer_gpu(layer l, network_state state);
 #endif
