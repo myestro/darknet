@@ -10,6 +10,7 @@
 
 #ifdef OPENCV
 #include "opencv2/highgui/highgui_c.h"
+#include <opencv2/videoio/videoio_c.h>
 #endif
 
 extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top);
@@ -385,7 +386,9 @@ int main(int argc, char **argv)
         cuda_set_device(gpu_index);
     }
 
+#ifdef OPENCL
     opencl_init(NULL, NULL, NULL);
+#endif
 #endif
 
     if (0 == strcmp(argv[1], "average")){
@@ -471,7 +474,9 @@ int main(int argc, char **argv)
         fprintf(stderr, "Not an option: %s\n", argv[1]);
     }
 
+#ifdef OPENCL
     opencl_deinit();
+#endif
 
     return 0;
 }

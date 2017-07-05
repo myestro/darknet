@@ -1,3 +1,4 @@
+
 #include "network.h"
 #include "cost_layer.h"
 #include "utils.h"
@@ -6,6 +7,7 @@
 
 #ifdef OPENCV
 #include "opencv2/highgui/highgui_c.h"
+#include <opencv2/videoio/videoio_c.h>
 #endif
 
 void train_lsd3(char *fcfg, char *fweight, char *gcfg, char *gweight, char *acfg, char *aweight, int clear)

@@ -17,7 +17,7 @@ GPU=1
 OPENCL=1
 CUDA=0
 CUDNN=0
-OPENCV=1
+OPENCV=0
 DEBUG=0
 CUDA_MEM_DEBUG=0
 GPU_UNIT=1
@@ -45,6 +45,12 @@ OBJDIR_CPP_SHARED=./obj-cpp-shared/
 CC_CPP=g++
 CFLAGS_CPP=-Wno-write-strings -std=c++0x
 
+# Unit test Definitiions
+EXEC_UNIT=darknet-unit
+OBJDIR_UNIT=./obj-unit/
+CC_UNIT=g++
+CFLAGS_UNIT=-Wno-write-strings -std=c++0x
+
 ifeq ($(CUDA), 1)
 NVCC=nvcc
 endif
@@ -54,8 +60,11 @@ LDFLAGS= -lm -pthread
 COMMON= 
 CFLAGS=-Wall -Wfatal-errors -Wno-unused-result
 
-
 ifeq ($(DEBUG), 1) 
+OPTS=-O0 -g
+endif
+
+ifeq ($(UNIT), 1)
 OPTS=-O0 -g
 endif
 
@@ -64,8 +73,8 @@ CFLAGS+=$(OPTS)
 ifeq ($(OPENCV), 1) 
 COMMON+= -DOPENCV
 CFLAGS+= -DOPENCV
-LDFLAGS+= `pkg-config --libs opencv` 
-COMMON+= `pkg-config --cflags opencv` 
+LDFLAGS+= $(shell pkg-config --libs opencv) 
+COMMON+= $(shell pkg-config --cflags opencv)
 endif
 
 # Place the IPP .a file from OpenCV here for easy linking
@@ -81,7 +90,10 @@ endif
 ifeq ($(OPENCL), 1)
 COMMON+= -DGPU -DOPENCL
 CFLAGS+= -DGPU -DOPENCL
-LDFLAGS+= -L/usr/lib/x86_64-linux-gnu -L/opt/amdgpu-pro/lib/x86_64-linux-gnu -lOpenCL -lclBLAS
+LDFLAGS+= -L/usr/lib/x86_64-linux-gnu
+LDFLAGS+= -L/opt/amdgpu-pro/lib/x86_64-linux-gnu
+LDFLAGS+= $(shell pkg-config --libs OpenCL)
+LDFLAGS+= $(shell pkg-config --libs clBLAS)
 endif
 
 endif
@@ -113,6 +125,15 @@ endif
 
 endif
 
+ifeq ($(GPU), 0)
+OBJ-SHARED+=cpu.o
+endif
+
+ifeq ($(UNIT), 1)
+OBJ_UNIT=$(OBJ-SHARED) blas_unit.o col2im_unit.o convolutional_unit.o gemm_unit.o maxpool_unit.o network_unit.o region_unit.o unit.o
+OBJS_UNIT=$(addprefix $(OBJDIR_UNIT), $(OBJ_UNIT))
+endif
+
 OBJ=$(OBJ-SHARED) darknet.o
 OBJS = $(addprefix $(OBJDIR), $(OBJ))
 DEPS = $(wildcard src/*.h) Makefile
@@ -120,7 +141,7 @@ DEPS = $(wildcard src/*.h) Makefile
 OBJS_CPP = $(addprefix $(OBJDIR_CPP), $(OBJ))
 OBJS_CPP_SHARED = $(addprefix $(OBJDIR_CPP_SHARED), $(OBJ-SHARED))
 
-all: backup obj obj-cpp results $(EXEC) $(EXEC_CPP)
+all: backup obj obj-cpp obj-unit weights results $(EXEC) $(EXEC_CPP) $(EXEC_UNIT)
 
 $(EXEC): obj clean $(OBJS)
 	$(CC) $(COMMON) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
@@ -128,11 +149,15 @@ $(EXEC): obj clean $(OBJS)
 $(OBJDIR)%.o: %.c $(DEPS)
 	$(CC) $(COMMON) $(CFLAGS) -c $< -o $@
 
+$(EXEC_UNIT): obj-unit clean-cpp weights weights-download $(OBJS_UNIT)
+	$(CC_UNIT) $(COMMON) $(CFLAGS) $(OBJS_UNIT) -o $@ $(LDFLAGS)
 $(EXEC_CPP): obj-cpp clean-cpp $(OBJS_CPP)
 	$(CC_CPP) $(COMMON) $(CFLAGS) $(OBJS_CPP) -o $@ $(LDFLAGS)
 $(SHARED_CPP): obj-shared-cpp clean-cpp $(OBJS_CPP_SHARED)
 	$(CC_CPP) $(COMMON) $(CFLAGS) $(OBJS_CPP_SHARED) -o lib$@.so $(LDFLAGS) -shared	
 
+$(OBJDIR_UNIT)%.o: %.c $(DEPS)
+	$(CC_UNIT) $(COMMON) $(CFLAGS_UNIT) $(CFLAGS) -c $< -o $@
 $(OBJDIR_CPP)%.o: %.c $(DEPS)
 	$(CC_CPP) $(COMMON) $(CFLAGS_CPP) $(CFLAGS) -c $< -o $@
 $(OBJDIR_CPP_SHARED)%.o: %.c $(DEPS)
@@ -155,6 +180,13 @@ obj-cpp:
 	mkdir -p obj-cpp
 obj-shared-cpp:
 	mkdir -p obj-cpp-shared
+obj-unit:
+	mkdir -p obj-unit
+weights:
+	mkdir -p weights
+weights-download: weights
+	wget -O weights/yolo.weights https://pjreddie.com/media/files/yolo.weights
+	touch $@
 
 backup:
 	mkdir -p backup
@@ -167,5 +199,5 @@ results:
 clean:
 	rm -rf $(OBJS) $(EXEC)
 clean-cpp:
-	rm -rf $(OBJS_CPP) $(OBJS_CPP_SHARED) $(EXEC_CPP) $(SHARED_CPP)
+	rm -rf $(OBJS_CPP) $(OBJS_CPP_SHARED) $(OBJS_UNIT) $(EXEC_CPP) $(SHARED_CPP) $(EXEC_UNIT)
 

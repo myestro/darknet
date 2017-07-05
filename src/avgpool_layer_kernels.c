@@ -13,8 +13,8 @@ void avgpool_kernel_init(void)
 {
     opencl_load_buffer(avgpool_layer_kernel_source, strlen(avgpool_layer_kernel_source), &opencl_avgpool_layer_kernel_program);
 
-    opencl_create_kernel(&opencl_avgpool_layer_kernel_program, "opencl_forward_avgpool_layer_kernel", &opencl_forward_avgpool_layer_kernel);
-    opencl_create_kernel(&opencl_avgpool_layer_kernel_program, "opencl_backward_avgpool_layer_kernel", &opencl_backward_avgpool_layer_kernel);
+    opencl_create_kernel(&opencl_avgpool_layer_kernel_program, "forward_avgpool_layer_kernel", &opencl_forward_avgpool_layer_kernel);
+    opencl_create_kernel(&opencl_avgpool_layer_kernel_program, "backward_avgpool_layer_kernel", &opencl_backward_avgpool_layer_kernel);
 }
 
 void avgpool_kernel_release(void)

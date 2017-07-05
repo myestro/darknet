@@ -1,9 +1,8 @@
 #ifdef GPU
-#include "cuda.h"
-
-int gpu_index = 0;
-
 #ifdef OPENCL
+
+#include "cuda.h"
+int gpu_index = 0;
 
 cl_context opencl_context;
 cl_command_queue opencl_queue;
@@ -14,30 +13,39 @@ cl_bool opencl_foreign_context;
 #include <stdio.h>
 #include <stdarg.h>
 #include <math.h>
+
 #include "blas.h"
 #include "utils.h"
 
-extern void activation_kernels_init(void);
-extern void blas_kernel_init(void);
-extern void col2im_kernel_init(void);
-extern void convolutional_kernel_init(void);
-extern void im2col_kernel_init(void);
-extern void maxpool_kernel_init(void);
-extern void gemm_kernel_init(void);
-extern void avgpool_kernel_init(void);
-extern void crop_kernel_init(void);
-extern void dropout_kernel_init(void);
+#ifdef __cplusplus
+#define EXTERN extern "C"
+#else
+#define EXTERN extern
+#endif
 
-extern void activation_kernels_release(void);
-extern void blas_kernel_release(void);
-extern void col2im_kernel_release(void);
-extern void convolutional_kernel_release(void);
-extern void im2col_kernel_release(void);
-extern void maxpool_kernel_release(void);
-extern void gemm_kernel_release(void);
-extern void avgpool_kernel_release(void);
-extern void crop_kernel_release(void);
-extern void dropout_kernel_release(void);
+EXTERN void activation_kernel_init(void);
+EXTERN void blas_kernel_init(void);
+EXTERN void col2im_kernel_init(void);
+EXTERN void convolutional_kernel_init(void);
+EXTERN void im2col_kernel_init(void);
+EXTERN void maxpool_kernel_init(void);
+EXTERN void gemm_kernel_init(void);
+EXTERN void avgpool_kernel_init(void);
+EXTERN void crop_kernel_init(void);
+EXTERN void dropout_kernel_init(void);
+
+EXTERN void activation_kernel_release(void);
+EXTERN void blas_kernel_release(void);
+EXTERN void col2im_kernel_release(void);
+EXTERN void convolutional_kernel_release(void);
+EXTERN void im2col_kernel_release(void);
+EXTERN void maxpool_kernel_release(void);
+EXTERN void gemm_kernel_release(void);
+EXTERN void avgpool_kernel_release(void);
+EXTERN void crop_kernel_release(void);
+EXTERN void dropout_kernel_release(void);
+
+#undef EXTERN
 
 
 dim3 dim3_create(const size_t x, const size_t y, const size_t z)
@@ -199,32 +207,32 @@ void opencl_init(cl_context context, cl_command_queue queue,
 
 		opencl_foreign_context = CL_FALSE;
 
-		//// Print out usefull information.
-		const size_t bufferSize = 2048;
-		char *buffer = (char*)calloc(bufferSize, sizeof(char));
-
-		clGetDeviceInfo(opencl_device, CL_DEVICE_NAME, bufferSize * sizeof(char), buffer, NULL);
-		printf("Device name: %s\n", buffer);
-		clGetDeviceInfo(opencl_device, CL_DEVICE_VENDOR, bufferSize * sizeof(char), buffer, NULL);
-		printf("Device vendor: %s\n", buffer);
-		clGetDeviceInfo(opencl_device, CL_DEVICE_VERSION, bufferSize * sizeof(char), buffer, NULL);
-		printf("Device opencl availability: %s\n", buffer);
-		clGetDeviceInfo(opencl_device, CL_DRIVER_VERSION, bufferSize * sizeof(char), buffer, NULL);
-		printf("Device opencl used: %s\n", buffer);
-
-		free(buffer);
+//		// Print out usefull information.
+//		const size_t bufferSize = 2048;
+//		char *buffer = (char*)calloc(bufferSize, sizeof(char));
+//
+//		clGetDeviceInfo(opencl_device, CL_DEVICE_NAME, bufferSize * sizeof(char), buffer, NULL);
+//		printf("Device name: %s\n", buffer);
+//		clGetDeviceInfo(opencl_device, CL_DEVICE_VENDOR, bufferSize * sizeof(char), buffer, NULL);
+//		printf("Device vendor: %s\n", buffer);
+//		clGetDeviceInfo(opencl_device, CL_DEVICE_VERSION, bufferSize * sizeof(char), buffer, NULL);
+//		printf("Device opencl availability: %s\n", buffer);
+//		clGetDeviceInfo(opencl_device, CL_DRIVER_VERSION, bufferSize * sizeof(char), buffer, NULL);
+//		printf("Device opencl used: %s\n", buffer);
+//
+//		free(buffer);
 	}
 
-	activation_kernels_init();
+	activation_kernel_init();
 	blas_kernel_init();
 	col2im_kernel_init();
 	convolutional_kernel_init();
 	im2col_kernel_init();
 	maxpool_kernel_init();
 	gemm_kernel_init();
-	//avgpool_kernel_init();
-	//crop_kernel_init();
-	//dropout_kernel_init();
+	avgpool_kernel_init();
+	crop_kernel_init();
+	dropout_kernel_init();
 
 	// Activate darknet GPU path.
 	gpu_index = 1;
@@ -235,16 +243,16 @@ void opencl_deinit()
 	if (opencl_context == NULL)
 		return;
 
-	activation_kernels_release();
+	activation_kernel_release();
 	blas_kernel_release();
 	col2im_kernel_release();
 	convolutional_kernel_release();
 	im2col_kernel_release();
 	maxpool_kernel_release();
 	gemm_kernel_release();
-	//avgpool_kernel_release();
-	//crop_kernel_release();
-	//dropout_kernel_release();
+	avgpool_kernel_release();
+	crop_kernel_release();
+	dropout_kernel_release();
 
 	clFinish(opencl_queue);
 	gpu_index = -1;
@@ -433,5 +441,5 @@ void cuda_dump_mem_stat()
 	printf("OpenCL memory status: Free/Total = [%lu]/[%lu]\n", total - used, total);
 }
 
+#endif // OPENCL
 #endif // GPU
-#endif

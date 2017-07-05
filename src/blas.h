@@ -5,8 +5,6 @@
 extern "C" {
 #endif
 
-//void reorg(float *x, int size, int layers, int batch, int forward);
-
 void flatten(float *x, int size, int layers, int batch, int forward);
 
 void pm(int M, int N, float *A);

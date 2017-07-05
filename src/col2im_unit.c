@@ -1,14 +1,13 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include <stdio.h>
-
+//#include <stdio.h>
+//
 #include "col2im.h"
 #include "im2col.h"
-#include "cuda.h"
+//#include "cuda.h"
 #include "unit.h"
 
-TEST_CASE("Opencl kernel compare.", "[col2im][opencl]")
+TEST_CASE("col2im and im2col cpu gpu compare", "[col2im][opencl]")
 {
 	const size_t testSize = 416 * 416 * 3 * 3 * 3;
 	const float threshold = 0.9;
@@ -48,10 +47,10 @@ TEST_CASE("Opencl kernel compare.", "[col2im][opencl]")
 		compare_array(B, C, testSize, threshold);
 	}
 
-	opencl_deinit();
 
 	cuda_free(A_gpu);
 	cuda_free(B_gpu);
+	opencl_deinit();
 	free(A);
 	free(B);
 	free(C);

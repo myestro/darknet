@@ -49,7 +49,7 @@ float4 hsv_to_rgb_kernel(float4 hsv)
     if (s == 0) {
         r = g = b = v;
     } else {
-        int index = (int) floorf(h);
+        int index = (int) floor(h);
         f = h - index;
         p = v*(1-s);
         q = v*(1-s*f);
@@ -76,8 +76,8 @@ float4 hsv_to_rgb_kernel(float4 hsv)
 
 float bilinear_interpolate_kernel(__global float *image, int w, int h, float x, float y, int c)
 {
-    int ix = (int) floorf(x);
-    int iy = (int) floorf(y);
+    int ix = (int) floor(x);
+    int iy = (int) floor(y);
 
     float dx = x - ix;
     float dy = y - iy;

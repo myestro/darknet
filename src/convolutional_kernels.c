@@ -1,3 +1,5 @@
+#ifdef OPENCL
+
 #include <string.h>
 
 #include "activations.h"
@@ -10,8 +12,6 @@
 #include "utils.h"
 #include "cuda.h"
 #include "convolutional_kernels.cl"
-
-#ifdef OPENCL
 
 cl_kernel opencl_binarize_kernel;
 cl_kernel opencl_binarize_input_kernel;

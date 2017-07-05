@@ -1,14 +1,13 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include <stdio.h>
-
+//#include <stdio.h>
+//
 #include "blas.h"
-#include "cuda.h"
+//#include "cuda.h"
 #include "unit.h"
 #include "convolutional_layer.h"
 
-TEST_CASE("Opencl kernel bash", "[blas][opencl]")
+TEST_CASE("Blas cpu gpu compare", "[blas][opencl]")
 {
 	const float threshold = 0.95;
 	const size_t testSize = 416 * 416;
@@ -41,7 +40,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		axpy_ongpu(testSize, 1.0, A_gpu, 1, C_gpu, 1);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);	
+		compare_array(C, D, testSize, threshold);	
 	}
 
 	SECTION("axpy 2")
@@ -51,7 +50,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		axpy_ongpu(testSize, -1.0, A_gpu, 1, C_gpu, 1);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("axpy 3")
@@ -61,18 +60,18 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		axpy_ongpu(testSize, 0.1, A_gpu, 1, C_gpu, 1);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("copy")
 	{
 		copy_cpu(testSize, A, 1, C, 1);
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 
 		copy_ongpu(testSize, A_gpu, 1, C_gpu, 1);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("scal 1")
@@ -82,7 +81,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		scal_ongpu(testSize, 1.0, A_gpu, 1);
 		cuda_pull_array(A_gpu, C, testSize);
 
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 	}
 
 	SECTION("scal 2")
@@ -92,7 +91,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		scal_ongpu(testSize, 2.0, A_gpu, 1);
 		cuda_pull_array(A_gpu, C, testSize);
 
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 	}
 
 	SECTION("scal 3")
@@ -102,7 +101,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		scal_ongpu(testSize, 0.1, A_gpu, 1);
 		cuda_pull_array(A_gpu, C, testSize);
 
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 	}
 
 	SECTION("fill 1")
@@ -112,7 +111,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		fill_ongpu(testSize, 1.0, A_gpu, 1);
 		cuda_pull_array(A_gpu, C, testSize);
 
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 	}
 
 	SECTION("fill 2")
@@ -122,7 +121,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		fill_ongpu(testSize, -1.0, A_gpu, 1);
 		cuda_pull_array(A_gpu, C, testSize);
 
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 	}
 
 	SECTION("fill 3")
@@ -132,7 +131,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		fill_ongpu(testSize, 0.1, A_gpu, 1);
 		cuda_pull_array(A_gpu, C, testSize);
 
-		compareArray(A, C, testSize);
+		compare_array(A, C, testSize, threshold);
 	}
 
 	SECTION("mean 1")
@@ -142,7 +141,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		mean_gpu(A_gpu, 50, 50, 50, C_gpu);
 		cuda_pull_array(C_gpu, D, 50 * 50 * 50);
 
-		compareArray(C, D, 50 * 50 * 50);
+		compare_array(C, D, 50 * 50 * 50, threshold);
 	}
 
 	SECTION("mean 2")
@@ -152,7 +151,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		mean_gpu(A_gpu, 416, 416, 1, C_gpu);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("mean 3")
@@ -162,7 +161,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		mean_gpu(A_gpu, 1, 416, 416, C_gpu);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 
 	}
 
@@ -173,7 +172,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		mean_gpu(A_gpu, 416, 1, 416, C_gpu);
 		cuda_pull_array(C_gpu, D, testSize);
 
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("variance 1")
@@ -185,7 +184,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		variance_gpu(A_gpu, B_gpu, 50, 50, 50, C_gpu);
 
 		cuda_pull_array(C_gpu, D, 50 * 50 * 50);
-		compareArray(C, D, 50 * 50 * 50);
+		compare_array(C, D, 50 * 50 * 50, threshold);
 	}
 
 	SECTION("variance 2")
@@ -197,7 +196,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		variance_gpu(A_gpu, B_gpu, 416, 416, 1, C_gpu);
 
 		cuda_pull_array(C_gpu, D, testSize);
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("variance 3")
@@ -209,7 +208,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		variance_gpu(A_gpu, B_gpu, 416, 1, 416, C_gpu);
 
 		cuda_pull_array(C_gpu, D, testSize);
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("variance 4")
@@ -221,7 +220,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		variance_gpu(A_gpu, B_gpu, 1, 416, 416, C_gpu);
 
 		cuda_pull_array(C_gpu, D, testSize);
-		compareArray(C, D, testSize);
+		compare_array(C, D, testSize, threshold);
 	}
 
 	SECTION("normalize 1")
@@ -235,11 +234,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		normalize_gpu(A_gpu, B_gpu, C_gpu, 1, 416, 416);
 
 		cuda_pull_array(A_gpu, D, testSize);
-		size_t count = compareArray2(A, D, testSize);
-
-		CHECK(((float) count) / ((float) testSize) > 0.95);
-
-		printf("Comparision: %ld/%ld (%f)\n", count, testSize, ((float) count) / ((float) testSize));
+		compare_array(A, D, testSize, threshold);
 	}
 
 	SECTION("normalize 2")
@@ -253,11 +248,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		normalize_gpu(A_gpu, B_gpu, C_gpu, 416, 1, 416);
 
 		cuda_pull_array(A_gpu, D, testSize);
-		size_t count = compareArray2(A, D, testSize);
-
-		CHECK(((float) count) / ((float) testSize) > 0.95);
-
-		printf("Comparision: %ld/%ld (%f)\n", count, testSize, ((float) count) / ((float) testSize));
+		compare_array(A, D, testSize, threshold);
 	}
 
 	SECTION("normalize 3")
@@ -271,11 +262,7 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 		normalize_gpu(A_gpu, B_gpu, C_gpu, 416, 416, 1);
 
 		cuda_pull_array(A_gpu, D, testSize);
-		size_t count = compareArray2(A, D, testSize);
-
-		CHECK(((float) count) / ((float) testSize) > 0.95);
-
-		printf("Comparision: %ld/%ld (%f)\n", count, testSize, ((float) count) / ((float) testSize));
+		compare_array(A, D, testSize, threshold);
 	}
 
 	SECTION("normalize 4")
@@ -626,11 +613,11 @@ TEST_CASE("Opencl kernel bash", "[blas][opencl]")
 	}
 
 
-	opencl_deinit();
 
 	cuda_free(A_gpu);
 	cuda_free(B_gpu);
 	cuda_free(C_gpu);
+	opencl_deinit();
 	free(A);
 	free(B);
 	free(C);

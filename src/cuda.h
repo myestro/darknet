@@ -6,6 +6,7 @@ extern int gpu_index;
 #ifdef GPU
 
 #ifdef OPENCL
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include <CL/cl.h>
 #define GPU_DATA cl_mem
 extern cl_command_queue opencl_queue;
@@ -31,7 +32,6 @@ dim3 dim3_create(const size_t x, const size_t y, const size_t z);
 
 #ifdef CUDNN
 #include "cudnn.h"
-#endif
 #endif
 
 #ifdef __cplusplus 
@@ -87,4 +87,5 @@ void blas_handle_reset();
 #endif
 
 
-#endif
+#endif // GPU
+#endif // CUDA_H

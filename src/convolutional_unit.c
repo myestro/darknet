@@ -1,12 +1,11 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
-
+//#include <stdio.h>
+//#include <math.h>
+//#include <float.h>
+//
 #include "convolutional_layer.h"
-#include "cuda.h"
+//#include "cuda.h"
 #include "unit.h"
 #include "parser.h"
 #include "im2col.h"
@@ -20,13 +19,13 @@ extern void binarize_input_gpu(cl_mem x, int n, int size, cl_mem binary);
 extern void binarize_weights(float *x, int n, int size, float *binary);
 extern void binarize_weights_gpu(cl_mem x, int n, int size, cl_mem binary);
 
-TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
+TEST_CASE("Convolutional layer cpu gpu compare", "[convolutional][opencl]")
 {
 	const float threshold = 0.9;
 
 	opencl_init(NULL, NULL, NULL);
 
-	network net = load_network("yolo.cfg", "yolo.weights", 0);
+	network net = load_network(yolo_configuration_file, yolo_weights_file, 0);
 
 	network_state state;
 	state.net = net;
@@ -66,7 +65,7 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 		binarize_gpu(A_gpu, testSize, B_gpu);
 
 		cuda_pull_array(B_gpu, C, testSize);
-		compareArray(B, C, testSize);
+		compare_array(B, C, testSize, threshold);
 	}
 
 	SECTION("binarize 2")
@@ -75,7 +74,7 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 		binarize_input_gpu(A_gpu, l->n, l->c * l->size * l->size, B_gpu);
 
 		cuda_pull_array(B_gpu, C, testSize);
-		compareArray(B, C, testSize);
+		compare_array(B, C, testSize, threshold);
 	}
 
 	SECTION("binarize 3")
@@ -84,7 +83,7 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 		binarize_weights_gpu(A_gpu, l->n, l->c * l->size * l->size, B_gpu);
 
 		cuda_pull_array(B_gpu, C, testSize);
-		compareArray(B, C, testSize);
+		compare_array(B, C, testSize, threshold);
 	}
 
 //  Not sure how smooth works atm.
@@ -206,12 +205,12 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 	}
 
 
+
+    //cuda_free(state.input_gpu);
+
+    free(A);
+    free(B);
+    free(C);
+    free_network(net);
 	opencl_deinit();
-
-	//cuda_free(state.input_gpu);
-
-	free(A);
-	free(B);
-	free(C);
-	//free_network(net);
 }

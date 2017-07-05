@@ -15,7 +15,9 @@ convnet/
 decaf/
 submission/
 cfg/
+weights/
 darknet
+darknet-unit
 .fuse*
 
 # OS Generated #

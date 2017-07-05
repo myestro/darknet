@@ -1,3 +1,4 @@
+
 #include "network.h"
 #include "detection_layer.h"
 #include "cost_layer.h"
@@ -7,7 +8,8 @@
 #include "demo.h"
 
 #ifdef OPENCV
-#include "opencv2/highgui/highgui_c.h"
+#include <opencv2/highgui/highgui_c.h>
+#include <opencv2/videoio/videoio_c.h>
 #endif
 
 char *voc_names[] = {"aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"};

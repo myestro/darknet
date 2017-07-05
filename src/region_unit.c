@@ -1,28 +1,32 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
-
-#include "convolutional_layer.h"
-#include "cuda.h"
+//#include <stdio.h>
+//#include <math.h>
+//#include <float.h>
+//
+//#include "convolutional_layer.h"
+//#include "cuda.h"
 #include "unit.h"
-#include "parser.h"
-#include "im2col.h"
+//#include "parser.h"
+//#include "im2col.h"
 #include "blas.h"
-#include "gemm.h"
+//#include "gemm.h"
 #include "region_layer.h"
 
-extern int entry_index(layer l, int batch, int location, int entry);
+int entry_index_(layer l, int batch, int location, int entry)
+{
+    int n =   location / (l.w*l.h);
+    int loc = location % (l.w*l.h);
+    return batch*l.outputs + n*l.w*l.h*(l.coords+l.classes+1) + entry*l.w*l.h + loc;
+}
 
-TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
+TEST_CASE("convolutional kernal bash", "[region][opencl]")
 {
 	const float threshold = 0.9;
 
 	opencl_init(NULL, NULL, NULL);
 
-	network net = load_network("yolo.cfg", "yolo.weights", 0);
+	network net = load_network(yolo_configuration_file, yolo_weights_file, 0);
 
 	network_state state;
 	state.net = net;
@@ -60,18 +64,18 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 		copy_ongpu(l->batch*l->inputs, state.input_gpu, 1, l->output_gpu, 1);
 
 		cuda_pull_array(l->output_gpu, B, l->batch*l->inputs);
-		compare_array(l->output, B, l->batch * l->inputs, threshold, 0);
+		compare_array(l->output, B, l->batch * l->inputs, threshold);
 
 	    int i,j,b,t,n;
 
 	    for (b = 0; b < l->batch; ++b){
 	        for(n = 0; n < l->n; ++n){
-	            int index = entry_index(*l, b, n*l->w*l->h, 0);
+	            int index = entry_index_(*l, b, n*l->w*l->h, 0);
 
 	            activate_array(l->output + index, 2*l->w*l->h, LOGISTIC);
 	            activate_array_offset_ongpu(l->output_gpu, index, 2*l->w*l->h, LOGISTIC);
 
-	            index = entry_index(*l, b, n*l->w*l->h, 4);
+	            index = entry_index_(*l, b, n*l->w*l->h, 4);
 
 	            activate_array(l->output + index,   l->w*l->h, LOGISTIC);
 	            activate_array_offset_ongpu(l->output_gpu, index,   l->w*l->h, LOGISTIC);
@@ -79,14 +83,14 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 	    }
 
 	    cuda_pull_array(l->output_gpu, B, l->batch * l->n * l->w * l->h);
-	    compare_array(l->output, B, l->batch * l->n * l->w * l->h, threshold, 0);
+	    compare_array(l->output, B, l->batch * l->n * l->w * l->h, threshold);
 
 	    if (l->softmax_tree){
 	        int i;
 	        int count = 5;
 	        for (i = 0; i < l->softmax_tree->groups; ++i) {
 	            int group_size = l->softmax_tree->group_size[i];
-	            int index = entry_index(*l, 0, 0, count);
+	            int index = entry_index_(*l, 0, 0, count);
 
 	            softmax_cpu(state.input + count, group_size, l->batch, l->inputs, l->n*l->w*l->h, 1, l->n*l->w*l->h, l->temperature, l->output + count);
 	            softmax_offset_gpu(state.input_gpu, index, group_size, l->batch*l->n, l->inputs/l->n, l->w*l->h, 1, l->w*l->h, 1, l->output_gpu);
@@ -94,16 +98,16 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 	        }
 
 	        cuda_pull_array(l->output_gpu, B, l->batch * l->inputs);
-	        compare_array(l->output, B, l->batch * l->inputs, threshold, 0);
+	        compare_array(l->output, B, l->batch * l->inputs, threshold);
 
 	    } else if (l->softmax) {
-	        int index = entry_index(*l, 0, 0, 5);
+	        int index = entry_index_(*l, 0, 0, 5);
 
 	        softmax_cpu(state.input + index, l->classes, l->batch*l->n, l->inputs/l->n, l->w*l->h, 1, l->w*l->h, 1, l->output + index);
 	        softmax_offset_gpu(state.input_gpu, index, l->classes, l->batch*l->n, l->inputs/l->n, l->w*l->h, 1, l->w*l->h, 1, l->output_gpu);
 
 	        cuda_pull_array(l->output_gpu, B, l->batch * l->outputs);
-	        compare_array(l->output, B, l->batch * l->outputs, threshold, 0);
+	        compare_array(l->output, B, l->batch * l->outputs, threshold);
 	    }
 	    if(!state.train || l->onlyforward){
 	        //cuda_pull_array(l->output_gpu, l->output, l->batch*l->outputs);
@@ -112,7 +116,7 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 	    memset(l->delta, 0, l->outputs * l->batch * sizeof(float));
 
 	    cuda_pull_array(l->output_gpu, B, l->batch * l->outputs);
-	    compare_array(l->output, B, l->batch * l->outputs, threshold, 0);
+	    compare_array(l->output, B, l->batch * l->outputs, threshold);
 	}
 
 	SECTION("Forward region versus")
@@ -126,7 +130,7 @@ TEST_CASE("convolutional kernal bash", "[convolutional][opencl]")
 		forward_region_layer_gpu(*l, state);
 
 		cuda_pull_array(l->output_gpu, A, l->batch * l->outputs);
-		compare_array(A, B, l->batch * l->outputs, threshold, 0);
+		compare_array(A, B, l->batch * l->outputs, threshold);
 	}
 
 	free_network(net);

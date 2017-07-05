@@ -330,7 +330,7 @@ __kernel void add_kernel(int N, float ALPHA, __global float *X, int INCX)
 __kernel void scal_kernel(int N, float ALPHA, __global float *X, int INCX)
 {
     int i = (get_group_id(0) + get_group_id(1)*get_num_groups(0)) * get_local_size(0) + get_local_id(0);
-    if(i < N) X[i*INCX] *= 0.1;
+    if(i < N) X[i*INCX] *= ALPHA;
 }
 
 

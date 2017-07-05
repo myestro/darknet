@@ -1,7 +1,7 @@
 #ifdef OPENCL
 
 #include <string.h>
-#include "activations.h"
+#include "activation_layer.h"
 #include "cuda.h"
 
 #include "activation_kernels.cl"
@@ -10,7 +10,7 @@ cl_program opencl_activation_kernel_program = 0;
 cl_kernel opencl_activate_array_kernel = 0;
 cl_kernel opencl_gradient_array_kernel = 0;
 
-void activation_kernels_init(void)
+void activation_kernel_init(void)
 {
 	opencl_load_buffer(activation_kernels_source, strlen(activation_kernels_source), &opencl_activation_kernel_program);
 	opencl_create_kernel(&opencl_activation_kernel_program,
@@ -19,7 +19,7 @@ void activation_kernels_init(void)
 		"gradient_array_kernel", &opencl_gradient_array_kernel);
 }
 
-void activation_kernels_release(void)
+void activation_kernel_release(void)
 {
 	clReleaseKernel(opencl_activate_array_kernel);
 	clReleaseKernel(opencl_gradient_array_kernel);

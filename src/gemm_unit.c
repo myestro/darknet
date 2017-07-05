@@ -1,12 +1,11 @@
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include <stdio.h>
-#include <math.h>
-#include <float.h>
-
+//#include <stdio.h>
+//#include <math.h>
+//#include <float.h>
+//
 #include "gemm.h"
-#include "cuda.h"
+//#include "cuda.h"
 #include "unit.h"
 
 float *randomMatrix(int rows, int cols)
@@ -20,10 +19,11 @@ float *randomMatrix(int rows, int cols)
 }
 
 
-TEST_CASE("gemm kernel clash", "[gemm][opencl]")
+TEST_CASE("Genn cpu gpu compare", "[gemm][opencl]")
 {
 	int TA = 0;
 	int TB = 0;
+	const float threshold = 0.95;
 
 	SECTION("gemm 1")
 	{
@@ -76,10 +76,7 @@ TEST_CASE("gemm kernel clash", "[gemm][opencl]")
 	gemm_ongpu(TA, TB, m, n ,k, 1.0, A_gpu, 0, lda, B_gpu, 0, ldb, 1.0, C_gpu, 0, ldc);
 
 	cuda_pull_array(C_gpu, D, m * n);
-	size_t counter = compareArray2(C, D, m * n);
-
-	CHECK(((float) counter) / ((float) m * n) > 0.9);
-	printf("Comparison: %ld/%d (%5.2f%%)\n", counter, m * n, ((float) counter) / ((float) m * n) * 100);
+	compare_array(C, D, m * n, threshold);
 
 	cuda_free(A_gpu);
 	cuda_free(B_gpu);
