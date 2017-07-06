@@ -1,91 +1,74 @@
 ![Darknet Logo](https://github.com/prabindh/darknet/blob/master/arapaho/darknetcpplogo.png)
 
-# Darknet-cpp
+# Darknet-cpp-opencl
 
-Darknet-cpp project is a bug-fixed and C++ compilable version of darknet, an open source neural network framework written in C and CUDA. Darknet-cpp builds on Linux, Windows and also tested on Mac by users.
+Darknet-cpp-opencl project is a fork of the bug-fixed and C++ compilable version of darknet, an open source neural network framework written in C, CUDA and now with OpenCL support. Darknet-cpp-opencl builds and is tested on Linux. It should also work on Windows and Mac, but is still untested.
 
 **Features**
 
-* Uses same code-base as original darknet (ie same .c files are used). Modification is done only for runtime bug-fixes, compile time fixes for c++, and the build system itself. For list of bugs fixed, refer to this thread - https://groups.google.com/forum/#!topic/darknet/4Hb159aZBbA, and https://github.com/prabindh/darknet/issues
+* Uses same code-base as original darknet (ie same .c files are used). Modification is done only for runtime bug-fixes, compile time fixes for c++, and the build system itself. The OpenCL support is realised by adding new *.c and *.cl files which complement the cuda and cpu implementation.
+
+For questions about this port, please use the [Google group](https://groups.google.com/forum/#!forum/darknet-opencl-port)
 
 * The Linux build system supports 3 targets - 
   * original darknet (with gcc compiler), 
   * darknet-cpp (with g++ compiler and Visual Studio compiler), and 
   * Shared library (libdarknet-cpp-shared.so)
 
-* Can use bounding boxes directly from Euclid object labeller (https://github.com/prabindh/euclid)
+* The Linux build system also supports 3 computation backends -
+  * The original cpu implementation
+  * The original cuda implementation
+  * The new OpenCL implementation
 
-* C++ API - arapaho, that works in conjunction with libdarknet-cpp-shared.so, and a test wrapper that can read images or video files, and show detected regions in a complete C++ application.
+**Requirements**
 
-* darknet-cpp supports OpenCV3. Tested on Ubuntu 16.04 and windows, with CUDA 8.x
+The new OpenCL backend needs the AMD clBLAS libraries as a replacement for the cuda BLAS libraries. You can find these libraries [here](https://github.com/clMathLibraries/clBLAS). Also you should install your OpenCL drivers.
 
-* Note: darknet-cpp requires a C++11 compiler for arapaho builds.
+Also catch is needed for the unit testing and can be found here - https://github.com/philsquared/Catch
+
+On Ubuntu you can run the following apt-get command
+ * `sudo apt-get install libclblas2 clblas-client libclblas-dev catch`
+
+For the OpenCL drivers please follow the instructions given by your OpenCL vendor
+
+ * AMD - http://developer.amd.com/tools-and-sdks/opencl-zone/
+ * INTEL - https://software.intel.com/en-us/intel-opencl
+ * NVIDIA - https://developer.nvidia.com/opencl
 
 **Usage**
 
 Using the Makefile in the root directory of the darknet source repository,
 
- * `make darknet` - only darknet (original code), with OPENCV=0
- * `make darknet-cpp` - only the CPP version, with OPENCV=1
- * `make darknet-cpp-shared` - build the shared-lib version (without darknet.c calling wrapper), OPENCV=1
- * `make arapaho` - build arapaho and its test wrapper (from within arapaho folder)
+ * `make darknet` - darknet, without any GPU support.
+ * `make darknet GPU=1 CUDA=1` - darknet, with cuda support.
+ * `make darknet GPU=1 OPENCL=1` - darknet, with OpenCL support.
+ * `make darknet-unit GPU=1 GPU_UNIT=1 OPENCL=1` - Builds the cpu/gpu comparison unit tests.
+ * `make darknet-unit GPU=1 GPU_UNIT=1 CUDA=1` - Same as above but with cuda support.
+ * `make darknet-cpp` - The cpp fixes from the darknet-cpp port are also available.
+
+Please begin by runnning darknet-unit and verifying that your opencl platform is available.
  
-**Steps to train (Yolov2)**
+**Training the darknet with opencl support**
 
-* Download latest commit of darknet-cpp, ex
-
-`git clone https://github.com/prabindh/darknet`
-
-* Create Yolo compatible training data-set. I use this to create Yolo compatible bounding box format file, and training list file. 
-
-https://github.com/prabindh/euclid
-
-This creates a training list file (train.txt) that will be needed in next step of training.
-
-* Change the files per below:
-
-  * yolo-voc.cfg - change line classes=20 to suit desired number of classes
-  * yolo-voc.cfg - change the number of filters in the CONV layer above the region layer - (#classes + 4 + 1)*(5), where 4 is '#of coords', and 5 is 'num' in the cfg file.
-  * voc.data - change line classes=20, and paths to training image list file
-  * voc.names - number of lines must be equal the number of classes
-
-* Place label-images corresponding to name of classes in data/labels, ex - data/labels/myclassname1.png
-
-* Download http://pjreddie.com/media/files/darknet19_448.conv.23
-
-* Train as below
-
-  `./darknet-cpp detector train ./cfg/voc-myclasses.data ./cfg/yolo-myconfig.cfg darknet19_448.conv.23`
-
-  * Atleast for the few initial iterations, observe the log output, and ensure all images are found and being used. After convergence, detection can be performed using standard steps.
-
-* Testing with Arapaho C++ API for detection
-
-  Arapaho needs the darknet-cpp shared library (.so file on Linux, .dll on Windows). This can be built as below on Linux.
-
-  `make darknet-cpp-shared`
-
-  On Windows port, the .dll is built by default.
-
-  Refer the file https://github.com/prabindh/darknet/blob/master/arapaho/arapaho_readme.txt for more details.
+Training a network should be identical to the process described [here](https://pjreddie.com/darknet/yolo/). But this is still untested. 
 
 # How to file issues
 
-If there is a need to report an issue with the darknet-cpp port, use the link - https://github.com/prabindh/darknet/issues.
+For issues with the darknet-cpp port, use the link - https://github.com/prabindh/darknet/issues.
+
+For issues with the darknet-cpp-opencl port, use the link - https://groups.google.com/forum/#!forum/darknet-opencl-port
+
+For general issues with the darknet use the original mailing list - https://groups.google.com/forum/#!forum/darknet
 
 Information required for filing an issue:
 
-  * Output of `git log --format="%H" -n 1`
-
   * Options enabled in Makefile (GPU,CUDNN)
-
-  * If using Arapaho C++ wrapper, what options were used to build
 
   * Platform being used (OS version, GPU type, CUDA version, and OpenCV version)
 
 # Darknet-cpp for Windows
 
-Currently tested with VS2013, CUDA8.0 on Win10. 
+I have not tested this on windows yet, but it should still work.
 
 The solution file requires the below repository.
 

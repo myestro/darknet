@@ -13,14 +13,14 @@
 #
 # 
 
-GPU=1
-OPENCL=1
+GPU=0
+OPENCL=0
 CUDA=0
 CUDNN=0
 OPENCV=0
 DEBUG=0
 CUDA_MEM_DEBUG=0
-GPU_UNIT=1
+GPU_UNIT=0
 
 ARCH= -gencode arch=compute_30,code=sm_30 \
       -gencode arch=compute_35,code=sm_35 \
@@ -87,6 +87,7 @@ CFLAGS+= -DGPU -DCUDA
 LDFLAGS+= -L/usr/local/cuda/lib64 -lcuda -lcudart -lcublas -lcurand
 endif
 
+# You may need to edit these paths to your opencl and clBLAS implementation.
 ifeq ($(OPENCL), 1)
 COMMON+= -DGPU -DOPENCL
 CFLAGS+= -DGPU -DOPENCL
