@@ -2,40 +2,44 @@
 
 # Darknet-cpp-opencl
 
-Darknet-cpp-opencl project is a fork of the bug-fixed and C++ compilable version of darknet, an open source neural network framework written in C, CUDA and now with OpenCL support. Darknet-cpp-opencl builds and is tested on Linux. It should also work on Windows and Mac, but is still untested.
+*Darknet-cpp-opencl project is a fork of the bug-fixed and C++ compilable version of darknet, an open source neural network framework written in C, CUDA and now with OpenCL support. Darknet-cpp-opencl builds and is tested on Linux. It should also work on Windows and Mac, but is still untested.*
 
-**Features**
+##Features
 
-* Uses same code-base as original darknet (ie same .c files are used). Modification is done only for runtime bug-fixes, compile time fixes for c++, and the build system itself. The OpenCL support is realised by adding new *.c and *.cl files which complement the cuda and cpu implementation.
+*Uses same code-base as original darknet (ie same .c files are used). Modification is done only for runtime bug-fixes, compile time fixes for c++, and the build system itself. The OpenCL support is realised by adding new .c and .cl files which complement the cuda and cpu implementation.*
+
+
+*The Linux build system supports 3 targets*
+
+ * original darknet (with gcc compiler)
+ * darknet-cpp (with g++ compiler and Visual Studio compiler)
+ * Shared library (libdarknet-cpp-shared.so)
+
+*The Linux build system also supports 3 computation backends*
+
+ * The original cpu implementation
+ * The original cuda implementation
+ * The new OpenCL implementation
 
 For questions about this port, please use the [Google group](https://groups.google.com/forum/#!forum/darknet-opencl-port)
 
-* The Linux build system supports 3 targets - 
-  * original darknet (with gcc compiler), 
-  * darknet-cpp (with g++ compiler and Visual Studio compiler), and 
-  * Shared library (libdarknet-cpp-shared.so)
-
-* The Linux build system also supports 3 computation backends -
-  * The original cpu implementation
-  * The original cuda implementation
-  * The new OpenCL implementation
-
-**Requirements**
+##Requirements
 
 The new OpenCL backend needs the AMD clBLAS libraries as a replacement for the cuda BLAS libraries. You can find these libraries [here](https://github.com/clMathLibraries/clBLAS). Also you should install your OpenCL drivers.
 
-Also catch is needed for the unit testing and can be found here - https://github.com/philsquared/Catch
+Also catch is needed for the unit testing and can be found here - [catch](https://github.com/philsquared/Catch)
 
 On Ubuntu you can run the following apt-get command
+
  * `sudo apt-get install libclblas2 clblas-client libclblas-dev catch`
 
 For the OpenCL drivers please follow the instructions given by your OpenCL vendor
 
- * AMD - http://developer.amd.com/tools-and-sdks/opencl-zone/
- * INTEL - https://software.intel.com/en-us/intel-opencl
- * NVIDIA - https://developer.nvidia.com/opencl
+ * [AMD](http://developer.amd.com/tools-and-sdks/opencl-zone/)
+ * [INTEL](https://software.intel.com/en-us/intel-opencl)
+ * [NVIDIA](https://developer.nvidia.com/opencl)
 
-**Usage**
+##Usage
 
 Using the Makefile in the root directory of the darknet source repository,
 
@@ -48,27 +52,27 @@ Using the Makefile in the root directory of the darknet source repository,
 
 Please begin by runnning darknet-unit and verifying that your opencl platform is available.
  
-**Training the darknet with opencl support**
+##Training the darknet with opencl support
 
-Training a network should be identical to the process described [here](https://pjreddie.com/darknet/yolo/). But this is still untested. 
+**Training a network should be identical to the process described [here](https://pjreddie.com/darknet/yolo/). But this is still untested. **
 
 # How to file issues
 
-For issues with the darknet-cpp port, use the link - https://github.com/prabindh/darknet/issues.
+For issues with the darknet-cpp port, use the link - [darknet-cpp](https://github.com/prabindh/darknet/issues.)
 
-For issues with the darknet-cpp-opencl port, use the link - https://groups.google.com/forum/#!forum/darknet-opencl-port
+For issues with the darknet-cpp-opencl port, use the link -  [darknet-cpp-opencl](https://groups.google.com/forum/#!forum/darknet-opencl-port)
 
-For general issues with the darknet use the original mailing list - https://groups.google.com/forum/#!forum/darknet
+For general issues with the darknet use the original mailing list - [darknet](https://groups.google.com/forum/#!forum/darknet)
 
 Information required for filing an issue:
 
-  * Options enabled in Makefile (GPU,CUDNN)
-
+  * Options enabled in Makefile
+  * Did the unit test run?
   * Platform being used (OS version, GPU type, CUDA version, and OpenCV version)
 
 # Darknet-cpp for Windows
 
-I have not tested this on windows yet, but it should still work.
+**I have not tested this on windows yet, but it should still work.**
 
 The solution file requires the below repository.
 
