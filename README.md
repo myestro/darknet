@@ -4,7 +4,7 @@
 
 *Darknet-cpp-opencl project is a fork of the bug-fixed and C++ compilable version of darknet, an open source neural network framework written in C, CUDA and now with OpenCL support. Darknet-cpp-opencl builds and is tested on Linux. It should also work on Windows and Mac, but is still untested.*
 
-##Features
+## Features
 
 *Uses same code-base as original darknet (ie same .c files are used). Modification is done only for runtime bug-fixes, compile time fixes for c++, and the build system itself. The OpenCL support is realised by adding new .c and .cl files which complement the cuda and cpu implementation.*
 
@@ -23,7 +23,7 @@
 
 For questions about this port, please use the [Google group](https://groups.google.com/forum/#!forum/darknet-opencl-port)
 
-##Requirements
+## Requirements
 
 The new OpenCL backend needs the AMD clBLAS libraries as a replacement for the cuda BLAS libraries. You can find these libraries [here](https://github.com/clMathLibraries/clBLAS). Also you should install your OpenCL drivers.
 
@@ -39,7 +39,7 @@ For the OpenCL drivers please follow the instructions given by your OpenCL vendo
  * [INTEL](https://software.intel.com/en-us/intel-opencl)
  * [NVIDIA](https://developer.nvidia.com/opencl)
 
-##Usage
+## Usage
 
 Using the Makefile in the root directory of the darknet source repository,
 
@@ -52,7 +52,7 @@ Using the Makefile in the root directory of the darknet source repository,
 
 Please begin by runnning darknet-unit and verifying that your opencl platform is available.
  
-##Training the darknet with opencl support
+## Training the darknet with opencl support
 
 **Training a network should be identical to the process described [here](https://pjreddie.com/darknet/yolo/). But this is still untested. **
 
@@ -70,7 +70,7 @@ Information required for filing an issue:
   * Did the unit test run?
   * Platform being used (OS version, GPU type, CUDA version, and OpenCV version)
 
-# Darknet-cpp for Windows
+# Darknet-cpp for Windows #
 
 **I have not tested this on windows yet, but it should still work.**
 
