@@ -51,6 +51,17 @@ Using the Makefile in the root directory of the darknet source repository,
  * `make darknet-cpp` - The cpp fixes from the darknet-cpp port are also available.
 
 Please begin by runnning darknet-unit and verifying that your opencl platform is available.
+
+### CMake
+
+** Caution CMake support is experimental **
+
+You can also use cmake to generate a Makefile. Be warned just running the cmake command will replace the hand crafted makefile. Instead use the following commands to generate a makefile:
+ * `mkdir build` - Create a build folder
+ * `cmake -Bbuild -H. -DDARKNET_OPENCL:BOOL=ON` - Generate the makefiles
+ * `cmake --build build` - Compile the darknet sources
+ * `cp build/darknet .` - Place the binary where it should be
+ * `./darknet detect cfg/yolo.cfg yolo.weights data/dog.jpg` - Try it out
  
 ## Training the darknet with opencl support
 
