@@ -3,7 +3,7 @@ project(darknet)
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-option(DARKNET_CPU "Enable cpu support" OFF)
+option(DARKNET_CPU "Enable cpu support" ON)
 option(DARKNET_OPENCV "Enable OpenCV support" OFF)
 option(DARKNET_CUDA "Enable Cuda support" OFF)
 option(DARKNET_OPENCL "Enable OpenCL support")
@@ -25,6 +25,7 @@ if (DARKNET_OPENCV)
 endif()
 
 if (DARKNET_OPENCL)
+    set (DARKNET_CPU OFF)
     find_package(OpenCL REQUIRED)
     find_package(clBLAS REQUIRED)
     list (APPEND DARKNET_INCLUDE_DIRS ${OpenCL_INCLUDE_DIRS} ${CLBLAS_INCLUDE_DIRS})
@@ -33,6 +34,7 @@ if (DARKNET_OPENCL)
 endif()
 
 if (DARKNET_UNIT)
+    set (DARKNET_CPU OFF)
     find_package(Catch REQUIRED)
     list (APPEND DARKNET_INCLUDE_DIRS ${Catch_INCLUDE_DIRS})
 endif()
@@ -230,15 +232,6 @@ elseif(DARKNET_CPU)
         ${DARKNET_CPU_SOURCES} ${DARKNET_MAIN_SOURCE})
 
 endif()
-
-#if (DARKNET_CUDA)
-#    list (APPEND COMPILE_SOURCES ${DARKNET_CUDA_SOURCES})
-#endif()
-
-#add_executable(${DARKNET_CPP} ${DARKNET_SOURCES} ${DARKNET_MAIN_SOURCE})
-#add_executable(${DARKNET_UNIT} ${DARKNET_SOURCES} ${DARKNET_UNIT_SOURCES})
-#add_library(${DARKNET_LIBRARY} ${DARKNET_SOURCES})
-#add_library(${DARKNET_CPP_LIBRARY} ${DARKNET_SOURCES})
 
 target_link_libraries(${DARKNET_EXE} PUBLIC ${DARKNET_LIBRARIES})
 

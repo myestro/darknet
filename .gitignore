@@ -26,3 +26,8 @@ ehthumbs.db
 Icon?
 Thumbs.db
 *.swp
+CMakeCache.txt
+CMakeFiles
+CMake_install.cmake
+cmake_install.cmake
+build
