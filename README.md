@@ -79,7 +79,7 @@ Information required for filing an issue:
 
   * Options enabled in Makefile
   * Did the unit test run?
-  * Platform being used (OS version, GPU type, CUDA version, and OpenCV version)
+  * Platform being used (OS version, GPU type, OpenCL version, and OpenCV version)
 
 # Darknet-cpp for Windows #
 
