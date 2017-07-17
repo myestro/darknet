@@ -6,7 +6,9 @@ extern int gpu_index;
 #ifdef GPU
 
 #ifdef OPENCL
+#ifndef CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+#endif
 #include <CL/cl.h>
 #define GPU_DATA cl_mem
 extern cl_command_queue opencl_queue;
@@ -60,9 +62,10 @@ cublasHandle_t blas_handle();
 
 GPU_DATA cuda_make_array(float *x, size_t n);
 
-#if CUDA
+#ifdef CUDA
 int *cuda_make_int_array(size_t n);
-#elif OPENCL
+#endif
+#ifdef OPENCL
 GPU_DATA cuda_make_int_array(size_t n);
 #endif
 
