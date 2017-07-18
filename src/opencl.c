@@ -207,20 +207,21 @@ void opencl_init(cl_context context, cl_command_queue queue,
 
 		opencl_foreign_context = CL_FALSE;
 
-//		// Print out usefull information.
-//		const size_t bufferSize = 2048;
-//		char *buffer = (char*)calloc(bufferSize, sizeof(char));
-//
-//		clGetDeviceInfo(opencl_device, CL_DEVICE_NAME, bufferSize * sizeof(char), buffer, NULL);
-//		printf("Device name: %s\n", buffer);
-//		clGetDeviceInfo(opencl_device, CL_DEVICE_VENDOR, bufferSize * sizeof(char), buffer, NULL);
-//		printf("Device vendor: %s\n", buffer);
-//		clGetDeviceInfo(opencl_device, CL_DEVICE_VERSION, bufferSize * sizeof(char), buffer, NULL);
-//		printf("Device opencl availability: %s\n", buffer);
-//		clGetDeviceInfo(opencl_device, CL_DRIVER_VERSION, bufferSize * sizeof(char), buffer, NULL);
-//		printf("Device opencl used: %s\n", buffer);
-//
-//		free(buffer);
+#if defined(DARKNET_VERBOSE_OPENCL)
+		// Print out usefull information.
+		const size_t bufferSize = 2048;
+		char *buffer = (char*)calloc(bufferSize, sizeof(char));
+
+		clGetDeviceInfo(opencl_device, CL_DEVICE_NAME, bufferSize * sizeof(char), buffer, NULL);
+		printf("Device name: %s\n", buffer);
+		clGetDeviceInfo(opencl_device, CL_DEVICE_VENDOR, bufferSize * sizeof(char), buffer, NULL);
+		printf("Device vendor: %s\n", buffer);
+		clGetDeviceInfo(opencl_device, CL_DEVICE_VERSION, bufferSize * sizeof(char), buffer, NULL);
+		printf("Device opencl availability: %s\n", buffer);
+		clGetDeviceInfo(opencl_device, CL_DRIVER_VERSION, bufferSize * sizeof(char), buffer, NULL);
+		printf("Device opencl used: %s\n", buffer);
+		free(buffer);
+#endif
 	}
 
 	activation_kernel_init();
