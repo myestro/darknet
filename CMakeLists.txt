@@ -12,6 +12,7 @@ option(DARKNET_CUDA_MEM_DEBUG "Enable Cuda memory debug" OFF)
 option(DARKNET_DEBUG "Enable debug mode" OFF)
 option(DARKNET_STATIC "Build static library" ON)
 option(DARKNET_SHARED "Build shared library" ON)
+option(DARKNET_NO_BINARY "Do not build binary" OFF)
 
 include(GNUInstallDirs)
 
@@ -19,7 +20,7 @@ set (DARKNET_DEFINITIONS "")
 set (DARKNET_BINARY bindarknet)
 set (DARKNET_LIBRARY libdarknet)
 set (DARKNET_LIBRARY_STATIC libdarknet_s)
-set (DARKNET_CFLAGS "-Wall" "-Wno-misleading-indentation" "-Wfatal-errors")
+set (DARKNET_CFLAGS "-Wall" "-Wno-misleading-indentation" "-Wno-unused-result" "-Wfatal-errors")
 
 if (DARKNET_DEBUG OR DARKNET_TESTING)
     list (APPEND DARKNET_CFLAGS "-O0 -g")
@@ -297,14 +298,19 @@ if (DARKNET_STATIC)
     ConfigureLibrary(${DARKNET_LIBRARY_STATIC})
 endif()
 
-add_executable(${DARKNET_BINARY} ${DARKNET_SOURCES} ${DARKNET_CPU_SOURCES}
-    ${DARKNET_OPENCL_SOURCES} ${DARKNET_CUDA_SOURCES} ${DARKNET_WINDOWS_SOURCES}
-    ${DARKNET_MAIN_SOURCE})
 
-ConfigureBinary(${DARKNET_BINARY})
+if (NOT DARKNET_NO_BINARY)
+    add_executable(${DARKNET_BINARY} ${DARKNET_SOURCES} ${DARKNET_CPU_SOURCES}
+        ${DARKNET_OPENCL_SOURCES} ${DARKNET_CUDA_SOURCES} ${DARKNET_WINDOWS_SOURCES}
+        ${DARKNET_MAIN_SOURCE})
+
+    ConfigureBinary(${DARKNET_BINARY})
+endif()
 
 install(FILES ${DARKNET_PUBLIC_HEADERS} ${DARKNET_WINDOWS_PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME})
 
 install(EXPORT ${CMAKE_PROJECT_NAME} DESTINATION share/${CMAKE_PROJECT_NAME}/cmake)
 
-export(TARGETS ${DARKNET_LIBRARY} FILE darknetConfig.cmake)
+if (DARKNET_SHARED)
+    export(TARGETS ${DARKNET_LIBRARY} FILE darknetConfig.cmake)
+endif()
