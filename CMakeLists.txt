@@ -23,7 +23,7 @@ set (DARKNET_LIBRARY_STATIC libdarknet_s)
 set (DARKNET_CFLAGS "-Wall" "-Wno-misleading-indentation" "-Wno-unused-result" "-Wfatal-errors")
 
 if (DARKNET_DEBUG OR DARKNET_TESTING)
-    list (APPEND DARKNET_CFLAGS "-O -g")
+    list (APPEND DARKNET_CFLAGS "-g")
 else()
     list (APPEND DARKNET_CFLAGS "-Ofast")
 endif()
