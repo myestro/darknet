@@ -9,7 +9,13 @@ extern int gpu_index;
 #ifndef CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #endif
+
+#if defined(__APPLE__) || defined(__MACOSX)
+#include <OpenCL/cl.h>
+#else
 #include <CL/cl.h>
+#endif
+
 #define GPU_DATA cl_mem
 extern cl_command_queue opencl_queue;
 
@@ -28,7 +34,7 @@ dim3 dim3_create(const size_t x, const size_t y, const size_t z);
 #include "curand.h"
 #include "cublas_v2.h"
 #define GPU_DATA float*
-#endif 
+#endif
 
 #define BLOCK 512
 
@@ -36,11 +42,11 @@ dim3 dim3_create(const size_t x, const size_t y, const size_t z);
 #include "cudnn.h"
 #endif
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-// OpenCL 
+// OpenCL
 #ifdef OPENCL
 #define CONVERT_KERNEL_TO_STRING(...) #__VA_ARGS__
 void opencl_load(const char *fileName, cl_program *output);
@@ -85,7 +91,7 @@ void cudnn_handle_reset();
 void blas_handle_reset();
 #endif
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 
