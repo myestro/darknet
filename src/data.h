@@ -1,7 +1,7 @@
 #ifndef DATA_H
 #define DATA_H
 
-#if defined __linux__ || defined PTHREAD_WINDOWS
+#if defined __linux__ || defined __APPLE__ || defined PTHREAD_WINDOWS
 #include <pthread.h>
 #endif
 
